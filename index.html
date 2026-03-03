@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>明日への手紙 — コード進行</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Space+Mono:wght@400;700&display=swap');
+
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --yellow: #d29922;
+    --orange: #db6d28;
+    --red: #f85149;
+    --purple: #bc8cff;
+    --text: #e6edf3;
+    --muted: #8b949e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  header h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(1.4rem, 4vw, 2.2rem);
+    letter-spacing: 0.15em;
+    color: var(--text);
+  }
+
+  header p {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 6px;
+    letter-spacing: 0.2em;
+  }
+
+  .section {
+    margin-bottom: 32px;
+  }
+
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .section-tag {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border: 2px solid;
+  }
+
+  .section-name {
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .measures {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .measure {
+    display: flex;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    min-width: fit-content;
+    position: relative;
+  }
+
+  .measure::before {
+    content: '|';
+    color: var(--border);
+    font-size: 1rem;
+    margin-right: 4px;
+    align-self: center;
+  }
+
+  .chord {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: default;
+    transition: transform 0.15s, box-shadow 0.15s;
+    position: relative;
+  }
+
+  .chord:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+
+  .chord-name {
+    font-size: 0.82rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .chord-degree {
+    font-size: 0.6rem;
+    color: var(--muted);
+    margin-top: 2px;
+    white-space: nowrap;
+  }
+
+  /* Function colors */
+  .fn-tonic    { background: rgba(63,185,80,0.12); border: 1px solid rgba(63,185,80,0.35); }
+  .fn-dominant { background: rgba(88,166,255,0.12); border: 1px solid rgba(88,166,255,0.35); }
+  .fn-subdominant { background: rgba(210,153,34,0.12); border: 1px solid rgba(210,153,34,0.35); }
+  .fn-borrowed { background: rgba(245,81,73,0.12); border: 1px solid rgba(245,81,73,0.35); }
+  .fn-secondary { background: rgba(188,140,255,0.12); border: 1px solid rgba(188,140,255,0.35); }
+  .fn-chromatic { background: rgba(219,109,40,0.12); border: 1px solid rgba(219,109,40,0.35); }
+
+  .fn-tonic .chord-name    { color: var(--green); }
+  .fn-dominant .chord-name { color: var(--accent); }
+  .fn-subdominant .chord-name { color: var(--yellow); }
+  .fn-borrowed .chord-name { color: var(--red); }
+  .fn-secondary .chord-name { color: var(--purple); }
+  .fn-chromatic .chord-name { color: var(--orange); }
+
+  /* Section colors */
+  .tag-intro  { border-color: var(--muted); color: var(--muted); }
+  .tag-a      { border-color: var(--green); color: var(--green); }
+  .tag-c      { border-color: var(--accent); color: var(--accent); }
+  .tag-interlude { border-color: var(--purple); color: var(--purple); }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.65rem;
+    color: var(--muted);
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+  }
+
+  .arrow {
+    color: var(--muted);
+    font-size: 0.7rem;
+    align-self: center;
+    padding: 0 2px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>明日への手紙</h1>
+  <p>Key = A　コード進行ディグリー分析</p>
+</header>
+
+<!-- INTRO -->
+<div class="section">
+  <div class="section-label">
+    <div class="section-tag tag-intro">回</div>
+    <span class="section-name">イントロ</span>
+  </div>
+  <div class="measures">
+    <div class="measure">
+      <div class="chord fn-tonic"><div class="chord-name">A</div><div class="chord-degree">Ⅰ</div></div>
+      <div class="chord fn-dominant"><div class="chord-name">E/A</div><div class="chord-degree">Ⅴ/Ⅰ</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-subdominant"><div class="chord-name">D/A</div><div class="chord-degree">Ⅳ/Ⅰ</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-tonic"><div class="chord-name">A</div><div class="chord-degree">Ⅰ</div></div>
+      <div class="chord fn-dominant"><div class="chord-name">E/A</div><div class="chord-degree">Ⅴ/Ⅰ</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-borrowed"><div class="chord-name">Dm</div><div class="chord-degree">Ⅳm ★借用</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-dominant"><div class="chord-name">E</div><div class="chord-degree">Ⅴ</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- A-MELO -->
+<div class="section">
+  <div class="section-label">
+    <div class="section-tag tag-a">A</div>
+    <span class="section-name">Aメロ 前半</span>
+  </div>
+  <div class="measures">
+    <div class="measure">
+      <div class="chord fn-tonic"><div class="chord-name">A</div><div class="chord-degree">Ⅰ</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-dominant"><div class="chord-name">E/G#</div><div class="chord-degree">Ⅴ/Ⅶ</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-tonic"><div class="chord-name">F#m7</div><div class="chord-degree">Ⅵm7</div></div>
+      <div class="chord fn-dominant"><div class="chord-name">E</div><div class="chord-degree">Ⅴ</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-subdominant"><div class="chord-name">D</div><div class="chord-degree">Ⅳ</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-tonic"><div class="chord-name">C#m7</div><div class="chord-degree">Ⅲm7</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-subdominant"><div class="chord-name">Bm7</div><div class="chord-degree">Ⅱm7</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-subdominant"><div class="chord-name">D/E</div><div class="chord-degree">Ⅳ/Ⅴ</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-dominant"><div class="chord-name">E</div><div class="chord-degree">Ⅴ</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- A-MELO 後半 -->
+<div class="section">
+  <div class="section-label">
+    <div class="section-tag tag-a">A</div>
+    <span class="section-name">Aメロ 後半</span>
+  </div>
+  <div class="measures">
+    <div class="measure">
+      <div class="chord fn-tonic"><div class="chord-name">A</div><div class="chord-degree">Ⅰ</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-dominant"><div class="chord-name">E/G#</div><div class="chord-degree">Ⅴ/Ⅶ</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-tonic"><div class="chord-name">F#m7</div><div class="chord-degree">Ⅵm7</div></div>
+      <div class="chord fn-dominant"><div class="chord-name">E</div><div class="chord-degree">Ⅴ</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-secondary"><div class="chord-name">D#m7(b5)</div><div class="chord-degree">♯Ⅳm7(b5)</div></div>
+      <div class="arrow">→</div>
+      <div class="chord fn-secondary"><div class="chord-name">G#7</div><div class="chord-degree">Ⅶ7 = V7/Ⅲm</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-tonic"><div class="chord-name">C#m7</div><div class="chord-degree">Ⅲm7</div></div>
+      <div class="chord fn-tonic"><div class="chord-name">F#m7</div><div class="chord-degree">Ⅵm7</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-subdominant"><div class="chord-name">Bm7</div><div class="chord-degree">Ⅱm7</div></div>
+      <div class="chord fn-tonic"><div class="chord-name">A</div><div class="chord-degree">Ⅰ</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-borrowed"><div class="chord-name">G</div><div class="chord-degree">♭Ⅶ ★借用</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-dominant"><div class="chord-name">E</div><div class="chord-degree">Ⅴ</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SABI -->
+<div class="section">
+  <div class="section-label">
+    <div class="section-tag tag-c">C</div>
+    <span class="section-name">サビ 前半</span>
+  </div>
+  <div class="measures">
+    <div class="measure">
+      <div class="chord fn-tonic"><div class="chord-name">A</div><div class="chord-degree">Ⅰ</div></div>
+      <div class="chord fn-dominant"><div class="chord-name">E/G#</div><div class="chord-degree">Ⅴ/Ⅶ</div></div>
+      <div class="chord fn-tonic"><div class="chord-name">F#m7</div><div class="chord-degree">Ⅵm7</div></div>
+      <div class="chord fn-dominant"><div class="chord-name">E</div><div class="chord-degree">Ⅴ</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-subdominant"><div class="chord-name">D</div><div class="chord-degree">Ⅳ</div></div>
+      <div class="chord fn-dominant"><div class="chord-name">E</div><div class="chord-degree">Ⅴ</div></div>
+      <div class="chord fn-chromatic"><div class="chord-name">Fdim</div><div class="chord-degree">♭Ⅵdim ★経過</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-tonic"><div class="chord-name">F#m7</div><div class="chord-degree">Ⅵm7</div></div>
+      <div class="chord fn-dominant"><div class="chord-name">E</div><div class="chord-degree">Ⅴ</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-secondary"><div class="chord-name">D#m7(b5)</div><div class="chord-degree">♯Ⅳm7(b5)</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">
+    <div class="section-tag tag-c">C</div>
+    <span class="section-name">サビ 後半</span>
+  </div>
+  <div class="measures">
+    <div class="measure">
+      <div class="chord fn-subdominant"><div class="chord-name">Dmaj7</div><div class="chord-degree">Ⅳmaj7</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-dominant"><div class="chord-name">E</div><div class="chord-degree">Ⅴ</div></div>
+      <div class="chord fn-chromatic"><div class="chord-name">Fdim</div><div class="chord-degree">♭Ⅵdim</div></div>
+      <div class="chord fn-tonic"><div class="chord-name">F#m7</div><div class="chord-degree">Ⅵm7</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-subdominant"><div class="chord-name">D</div><div class="chord-degree">Ⅳ</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-tonic"><div class="chord-name">A/C#</div><div class="chord-degree">Ⅰ/Ⅲ</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-subdominant"><div class="chord-name">Bm7</div><div class="chord-degree">Ⅱm7</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-dominant"><div class="chord-name">Esus4</div><div class="chord-degree">Ⅴsus4</div></div>
+      <div class="chord fn-dominant"><div class="chord-name">E</div><div class="chord-degree">Ⅴ</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- INTERLUDE -->
+<div class="section">
+  <div class="section-label">
+    <div class="section-tag tag-interlude">間</div>
+    <span class="section-name">間奏</span>
+  </div>
+  <div class="measures">
+    <div class="measure">
+      <div class="chord fn-subdominant"><div class="chord-name">Dmaj7</div><div class="chord-degree">Ⅳmaj7</div></div>
+      <div class="chord fn-borrowed"><div class="chord-name">Dm7</div><div class="chord-degree">Ⅳm7 ★借用</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-tonic"><div class="chord-name">C#m7</div><div class="chord-degree">Ⅲm7</div></div>
+      <div class="chord fn-borrowed"><div class="chord-name">Cmaj7</div><div class="chord-degree">♭Ⅲmaj7 ★借用</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-subdominant"><div class="chord-name">Bm7</div><div class="chord-degree">Ⅱm7</div></div>
+      <div class="chord fn-tonic"><div class="chord-name">C#m7</div><div class="chord-degree">Ⅲm7</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-borrowed"><div class="chord-name">Dm7</div><div class="chord-degree">Ⅳm7</div></div>
+      <div class="chord fn-dominant"><div class="chord-name">E</div><div class="chord-degree">Ⅴ</div></div>
+    </div>
+    <div class="measure">
+      <div class="chord fn-dominant"><div class="chord-name">E</div><div class="chord-degree">Ⅴ</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-item">
+    <div class="legend-dot" style="background:rgba(63,185,80,0.5);border:1px solid #3fb950"></div>
+    トニック機能（T）
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:rgba(88,166,255,0.5);border:1px solid #58a6ff"></div>
+    ドミナント機能（D）
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:rgba(210,153,34,0.5);border:1px solid #d29922"></div>
+    サブドミナント機能（SD）
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:rgba(245,81,73,0.5);border:1px solid #f85149"></div>
+    借用和音（モーダルインターチェンジ）
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:rgba(188,140,255,0.5);border:1px solid #bc8cff"></div>
+    二次ドミナント
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:rgba(219,109,40,0.5);border:1px solid #db6d28"></div>
+    クロマティック経過音
+  </div>
+</div>
+
+</body>
+</html>
