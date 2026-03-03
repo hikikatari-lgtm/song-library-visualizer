@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>So Easy (To Fall In Love) — 完全コード進行解析</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Noto+Sans+JP:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8f6f0;
+    --bg2: #f0ede4;
+    --surface: #ffffff;
+    --border: #ddd8cc;
+    --text: #1c1a14;
+    --text-dim: #7a7565;
+    --accent: #2d5a8e;
+    --accent2: #8e2d5a;
+    --gold: #b8860b;
+
+    /* Function colors */
+    --T: #2c6e49;
+    --Tp: #52b788;
+    --S: #1d4e89;
+    --D: #9b2226;
+    --Dp: #e07a5f;
+    --Chr: #6b4226;
+    --sec: #6a4c93;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 24px;
+    border-bottom: 2px solid var(--text);
+    padding-bottom: 20px;
+    margin-bottom: 36px;
+  }
+
+  header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-style: italic;
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--text);
+  }
+
+  header h1 small {
+    display: block;
+    font-size: 0.45em;
+    font-style: normal;
+    font-weight: 400;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+
+  .meta-block {
+    text-align: right;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    line-height: 1.8;
+  }
+
+  .meta-block strong {
+    color: var(--accent);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.1rem;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  /* ── SCALE MAP ── */
+  .scale-map {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 26px;
+    margin-bottom: 28px;
+  }
+
+  .section-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .degrees-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+
+  .deg {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 6px;
+    text-align: center;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .deg::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--deg-color, transparent);
+  }
+
+  .deg .roman {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-dim);
+    display: block;
+  }
+
+  .deg .note-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    display: block;
+    margin: 2px 0;
+  }
+
+  .deg .quality {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    display: block;
+  }
+
+  .deg.used {
+    background: var(--surface);
+    border-color: var(--deg-color, var(--border));
+  }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 20px;
+    margin-bottom: 28px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+  }
+
+  .legend-swatch {
+    width: 14px;
+    height: 6px;
+    border-radius: 3px;
+  }
+
+  /* ── SONG SECTIONS ── */
+  .song-section {
+    margin-bottom: 24px;
+  }
+
+  .song-section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .sec-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 4px;
+    letter-spacing: 0.08em;
+  }
+
+  .sec-tag.intro  { background: #e8e0f5; color: #5b3fa0; border: 1px solid #c4b0e8; }
+  .sec-tag.verse  { background: #dcedf5; color: #1d4e89; border: 1px solid #a8cce0; }
+  .sec-tag.prechorus { background: #fef3e2; color: #b8660b; border: 1px solid #f0c87a; }
+  .sec-tag.chorus { background: #f5dce0; color: #8e2d3a; border: 1px solid #e0a8b0; }
+  .sec-tag.bridge { background: #dcf0e0; color: #2c6e49; border: 1px solid #a8d4b4; }
+  .sec-tag.outro  { background: #f0ede4; color: #5a5040; border: 1px solid #c8c0a8; }
+
+  .sec-desc {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  /* Chord progression grid */
+  .prog-grid {
+    display: grid;
+    gap: 8px;
+  }
+
+  .bar-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .bar-row.two-col {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .chord-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--fn-color, var(--border));
+    border-radius: 6px;
+    padding: 12px 13px;
+    position: relative;
+    transition: box-shadow 0.15s;
+  }
+
+  .chord-card:hover {
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+  }
+
+  .chord-card.rest {
+    background: var(--bg);
+    border-left-color: var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .rest-marks {
+    color: var(--border);
+    font-size: 1.1rem;
+    letter-spacing: 3px;
+  }
+
+  .chord-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 5px;
+  }
+
+  .chord-tags {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 5px;
+  }
+
+  .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.58rem;
+    padding: 1px 5px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .tag-deg { background: #f0ede4; color: var(--text-dim); }
+  .tag-fn  { color: white; }
+
+  .chord-note {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    line-height: 1.45;
+  }
+
+  /* ── THEORY GRID ── */
+  .theory-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 28px 0;
+  }
+
+  .theory-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+
+  .theory-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .theory-card p, .theory-card li {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  .theory-card ul { list-style: none; }
+  .theory-card ul li::before {
+    content: '— ';
+    color: var(--gold);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* ── FLOW CHART ── */
+  .flow-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 26px;
+    margin-bottom: 28px;
+  }
+
+  .flow-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed var(--border);
+  }
+
+  .flow-row:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .flow-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    min-width: 90px;
+    letter-spacing: 0.08em;
+  }
+
+  .flow-chord {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 9px;
+    color: var(--text);
+  }
+
+  .flow-chord.highlight {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+
+  .flow-arrow {
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .flow-annotation {
+    font-size: 0.68rem;
+    color: var(--gold);
+    font-style: italic;
+    margin-left: 4px;
+  }
+
+  /* ── KEY MOMENTS ── */
+  .key-moments {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--gold);
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin-bottom: 28px;
+  }
+
+  .key-moments h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+
+  .moment {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px 14px;
+    margin-bottom: 8px;
+    font-size: 0.78rem;
+  }
+
+  .moment-chord {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  .moment-desc { color: var(--text-dim); line-height: 1.5; }
+
+  @media (max-width: 640px) {
+    .degrees-grid { grid-template-columns: repeat(4, 1fr); }
+    .bar-row { grid-template-columns: repeat(2, 1fr); }
+    .theory-grid { grid-template-columns: 1fr; }
+    header { grid-template-columns: 1fr; }
+    .meta-block { text-align: left; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <header>
+    <h1>
+      <small>Olivia Dean</small>
+      So Easy<br><span style="font-size:0.55em;font-style:normal;color:var(--text-dim)">(To Fall In Love)</span>
+    </h1>
+    <div class="meta-block">
+      <strong>Key = E♭ Major</strong>
+      Moderately fast, breezy feel<br>
+      4/4 拍子<br>
+      Composers: Olivia Dean, Max Wolfgang,<br>Amy Allen, John Ryan
+    </div>
+  </header>
+
+  <!-- SCALE MAP -->
+  <div class="scale-map">
+    <div class="section-title">E♭ Major — スケール度数マップ</div>
+    <div class="degrees-grid">
+      <div class="deg used" style="--deg-color: var(--T)">
+        <span class="roman">I</span>
+        <span class="note-name">E♭</span>
+        <span class="quality">maj7</span>
+      </div>
+      <div class="deg used" style="--deg-color: var(--S)">
+        <span class="roman">II</span>
+        <span class="note-name">F</span>
+        <span class="quality">m7 / m11</span>
+      </div>
+      <div class="deg used" style="--deg-color: var(--Tp)">
+        <span class="roman">III</span>
+        <span class="note-name">G</span>
+        <span class="quality">m7</span>
+      </div>
+      <div class="deg used" style="--deg-color: var(--S)">
+        <span class="roman">IV</span>
+        <span class="note-name">A♭</span>
+        <span class="quality">maj7</span>
+      </div>
+      <div class="deg used" style="--deg-color: var(--D)">
+        <span class="roman">V</span>
+        <span class="note-name">B♭</span>
+        <span class="quality">7</span>
+      </div>
+      <div class="deg used" style="--deg-color: var(--Tp)">
+        <span class="roman">VI</span>
+        <span class="note-name">C</span>
+        <span class="quality">m7</span>
+      </div>
+      <div class="deg used" style="--deg-color: var(--Chr)">
+        <span class="roman">VII°</span>
+        <span class="note-name">D</span>
+        <span class="quality">m7♭5</span>
+      </div>
+    </div>
+    <div style="margin-top:10px;display:flex;align-items:center;gap:6px;font-size:0.72rem;color:var(--text-dim);">
+      <span style="width:10px;height:10px;background:var(--Chr);border-radius:2px;display:inline-block;"></span>
+      <span>Em7♭5 / Adim7 = ダイアトニック外（クロマティック）— E♭の♭II / ♭VII°</span>
+    </div>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--T)"></div> Tonic（T）トニック</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--Tp)"></div> Tonic代理（Tp）</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--S)"></div> Subdominant（S）</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--D)"></div> Dominant（D）</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--sec)"></div> Secondary Dominant（V/V）</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--Chr)"></div> Chromatic / Non-diatonic</div>
+  </div>
+
+  <!-- INTRO -->
+  <div class="song-section">
+    <div class="song-section-header">
+      <div class="sec-tag intro">INTRO</div>
+      <span class="sec-desc">浮遊するサブドミナント系ループ — グルーヴで始まる</span>
+    </div>
+    <div class="prog-grid">
+      <div class="bar-row">
+        <div class="chord-card" style="--fn-color: var(--S)">
+          <div class="chord-name">Fm11/C</div>
+          <div class="chord-tags">
+            <span class="tag tag-deg">IIm11</span>
+            <span class="tag tag-fn" style="background:var(--S)">S</span>
+          </div>
+          <div class="chord-note">Cをベースに置いたFm11。解決感を保留したまま揺れる。ドリアンモード的浮遊感。</div>
+        </div>
+        <div class="chord-card rest"><span class="rest-marks">/ / / /</span></div>
+        <div class="chord-card" style="--fn-color: var(--Tp)">
+          <div class="chord-name">Gm/D</div>
+          <div class="chord-tags">
+            <span class="tag tag-deg">IIIm</span>
+            <span class="tag tag-fn" style="background:var(--Tp)">Tp</span>
+          </div>
+          <div class="chord-note">Dをベースに置いたGm。トニック代理。Fm11との交代でイントロのグルーヴが完成。</div>
+        </div>
+        <div class="chord-card rest"><span class="rest-marks">/ / / /</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VERSE A -->
+  <div class="song-section">
+    <div class="song-section-header">
+      <div class="sec-tag verse">VERSE（Aメロ）</div>
+      <span class="sec-desc">"I could be the twist…" — テンション蓄積</span>
+    </div>
+    <div class="prog-grid">
+      <div class="bar-row">
+        <div class="chord-card" style="--fn-color: var(--S)">
+          <div class="chord-name">A♭/B♭</div>
+          <div class="chord-tags">
+            <span class="tag tag-deg">IVmaj7/V</span>
+            <span class="tag tag-fn" style="background:var(--S)">S</span>
+            <span class="tag tag-fn" style="background:var(--D)">D</span>
+          </div>
+          <div class="chord-note">ポリコード。上声部はIV（サブドミナント）、ベースはV（ドミナント）。解決をギリギリ引き延ばす。</div>
+        </div>
+        <div class="chord-card rest"><span class="rest-marks">/ / / /</span></div>
+        <div class="chord-card" style="--fn-color: var(--T)">
+          <div class="chord-name">E♭maj7</div>
+          <div class="chord-tags">
+            <span class="tag tag-deg">Imaj7</span>
+            <span class="tag tag-fn" style="background:var(--T)">T</span>
+          </div>
+          <div class="chord-note">ホームへ解決。A♭/B♭からの完全カデンツ（IV/V → I）。安定点。</div>
+        </div>
+        <div class="chord-card" style="--fn-color: var(--Chr)">
+          <div class="chord-name">Em7♭5</div>
+          <div class="chord-tags">
+            <span class="tag tag-deg">♭IIm7♭5</span>
+            <span class="tag tag-fn" style="background:var(--Chr)">Non-diatonic</span>
+          </div>
+          <div class="chord-note">クロマティックカラーコード。Ebに対して半音上のm7♭5。情感・影を加え次へのブリッジ。</div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <div class="chord-card" style="--fn-color: var(--S)">
+          <div class="chord-name">A♭/B♭</div>
+          <div class="chord-tags">
+            <span class="tag tag-deg">IVmaj7/V</span>
+            <span class="tag tag-fn" style="background:var(--S)">S</span>
+            <span class="tag tag-fn" style="background:var(--D)">D</span>
+          </div>
+          <div class="chord-note">"the cherry on the top" — 同パターン再現。緊張の揺れが続く。</div>
+        </div>
+        <div class="chord-card rest"><span class="rest-marks">/ / / /</span></div>
+        <div class="chord-card" style="--fn-color: var(--T)">
+          <div class="chord-name">E♭maj7</div>
+          <div class="chord-tags">
+            <span class="tag tag-deg">Imaj7</span>
+            <span class="tag tag-fn" style="background:var(--T)">T</span>
+          </div>
+          <div class="chord-note">再び解決。Verse全体が「浮遊→解決」を繰り返す構造。</div>
+        </div>
+        <div class="chord-card" style="--fn-color: var(--Chr)">
+          <div class="chord-name">Em7♭5</div>
+          <div class="chord-tags">
+            <span class="tag tag-deg">♭IIm7♭5</span>
+            <span class="tag tag-fn" style="background:var(--Chr)">Non-diatonic</span>
+          </div>
+          <div class="chord-note">Verse末尾で毎回登場。次のセクションへの不安定な橋渡し。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRE-CHORUS -->
+  <div class="song-section">
+    <div class="song-section-header">
+      <div class="sec-tag prechorus">PRE-CHORUS（Bメロ）</div>
+      <span class="sec-desc">"Some people make it hard…" — ドミナントへ向かう</span>
+    </div>
+    <div class="prog-grid">
+      <div class="bar-row">
+        <div class="chord-card" style="--fn-color: var(--S)">
+          <div class="chord-name">A♭/B♭</div>
+          <div class="chord-tags">
+            <span class="tag tag-deg">IVmaj7/V</span>
+            <span class="tag tag-fn" style="background:var(--S)">S+D</span>
+          </div>
+          <div class="chord-note">"Some people make it hard. With me, that isn't the case"</div>
+        </div>
+        <div class="chord-card rest"><span class="rest-marks">/ / / /</span></div>
+        <div class="chord-card" style="--fn-color: var(--T)">
+          <div class="chord-name">E♭maj7</div>
+          <div class="chord-tags">
+            <span class="tag tag-deg">Imaj7</span>
+            <span class="tag tag-fn" style="background:var(--T)">T</span>
+          </div>
+          <div class="chord-note">"'cause I…" — ここでトニックに着地してからコーラスへ踏み出す。</div>
+        </div>
+        <div class="chord-card" style="--fn-color: var(--sec)">
+          <div class="chord-name">C7/E</div>
+          <div class="chord-tags">
+            <span class="tag tag-deg">V7/VIm</span>
+            <span class="tag tag-fn" style="background:var(--sec)">V/vi</span>
+          </div>
+          <div class="chord-note">セカンダリードミナント。CmへのV7。Eをベースにしたクロマティックライン。コーラスへの強力なドライブ。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHORUS -->
+  <div class="song-section">
+    <div class="song-section-header">
+      <div class="sec-tag chorus">CHORUS（サビ）</div>
+      <span class="sec-desc">"I make it so easy to fall in love" — クライマックス</span>
+    </div>
+    <div class="prog-grid">
+      <div class="bar-row">
+        <div class="chord-card" style="--fn-color: var(--S)">
+          <div class="chord-name">Fm7</div>
+          <div class="chord-tags">
+            <span class="tag tag-deg">IIm7</span>
+            <span class="tag tag-fn" style="background:var(--S)">S</span>
+          </div>
+          <div class="chord-note">"I make it so easy to fall…" サビの核。サブドミナントで揺れる。</div>
+        </div>
+        <div class="chord-card" style="--fn-color: var(--S)">
+          <div class="chord-name">A♭/B♭</div>
+          <div class="chord-tags">
+            <span class="tag tag-deg">IVmaj7/V</span>
+            <span class="tag tag-fn" style="background:var(--S)">S+D</span>
+          </div>
+          <div class="chord-note">"…in love" — ペダルポイントで浮揚感を高める。</div>
+        </div>
+        <div class="chord-card" style="--fn-color: var(--Tp)">
+          <div class="chord-name">Cm7</div>
+          <div class="chord-tags">
+            <span class="tag tag-deg">VIm7</span>
+            <span class="tag tag-fn" style="background:var(--Tp)">Tp</span>
+          </div>
+          <div class="chord-note">トニック代理（相対マイナー）。感情的な深みと影。</div>
+        </div>
+        <div class="chord-card" style="--fn-color: var(--sec)">
+          <div class="chord-name">C7/E</div>
+          <div class="chord-tags">
+            <span class="tag tag-deg">V7/VIm</span>
+            <span class="tag tag-fn" style="background:var(--sec)">V/vi</span>
+          </div>
+          <div class="chord-note">再びセカンダリードミナント。ベースがEで半音クロマティック下降→Fm7へ。</div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <div class="chord-card" style="--fn-color: var(--S)">
+          <div class="chord-name">Fm7</div>
+          <div class="chord-tags">
+            <span class="tag tag-deg">IIm7</span>
+            <span class="tag tag-fn" style="background:var(--S)">S</span>
+          </div>
+          <div class="chord-note">"and we'll fall in to us" — サビ後半。同進行をループ。</div>
+        </div>
+        <div class="chord-card" style="--fn-color: var(--S)">
+          <div class="chord-name">A♭/B♭</div>
+          <div class="chord-tags">
+            <span class="tag tag-deg">IVmaj7/V</span>
+            <span class="tag tag-fn" style="background:var(--S)">S+D</span>
+          </div>
+          <div class="chord-note">"I'm the perfect mix of…"</div>
+        </div>
+        <div class="chord-card" style="--fn-color: var(--Tp)">
+          <div class="chord-name">Cm7</div>
+          <div class="chord-tags">
+            <span class="tag tag-deg">VIm7</span>
+            <span class="tag tag-fn" style="background:var(--Tp)">Tp</span>
+          </div>
+          <div class="chord-note">"Saturday night and the rest of your life."</div>
+        </div>
+        <div class="chord-card" style="--fn-color: var(--Chr)">
+          <div class="chord-name">Adim7</div>
+          <div class="chord-tags">
+            <span class="tag tag-deg">♭VII°7</span>
+            <span class="tag tag-fn" style="background:var(--Chr)">Dim pass.</span>
+          </div>
+          <div class="chord-note">"Anyone with a heart would agree" — ディミニッシュパッシング。Bb7の代理として次のFm11への橋渡し。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOOK / TITLE LINE -->
+  <div class="song-section">
+    <div class="song-section-header">
+      <div class="sec-tag bridge">HOOK（タイトルライン）</div>
+      <span class="sec-desc">"It's so easy to fall in love with me"</span>
+    </div>
+    <div class="prog-grid">
+      <div class="bar-row">
+        <div class="chord-card" style="--fn-color: var(--S)">
+          <div class="chord-name">Fm11</div>
+          <div class="chord-tags">
+            <span class="tag tag-deg">IIm11</span>
+            <span class="tag tag-fn" style="background:var(--S)">S</span>
+          </div>
+          <div class="chord-note">"It's so easy…" — イントロと同コード。循環の回帰。感動的なリフレイン。</div>
+        </div>
+        <div class="chord-card rest"><span class="rest-marks">/ / / /</span></div>
+        <div class="chord-card" style="--fn-color: var(--Tp)">
+          <div class="chord-name">Gm7</div>
+          <div class="chord-tags">
+            <span class="tag tag-deg">IIIm7</span>
+            <span class="tag tag-fn" style="background:var(--Tp)">Tp</span>
+          </div>
+          <div class="chord-note">"to fall in love with me." — 最後はGm7でフェードアウト。N.C.で終止。</div>
+        </div>
+        <div class="chord-card" style="--fn-color: var(--S)">
+          <div class="chord-name">A♭/B♭</div>
+          <div class="chord-tags">
+            <span class="tag tag-deg">IVmaj7/V</span>
+            <span class="tag tag-fn" style="background:var(--S)">S+D</span>
+          </div>
+          <div class="chord-note">タイトルラインとセットで繰り返し。エンディングへの推進力。</div>
+        </div>
+        <div class="chord-card rest"><span class="rest-marks">N.C.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOW DIAGRAM -->
+  <div class="flow-section">
+    <div class="section-title">楽曲全体フロー — ハーモニクス構造</div>
+
+    <div class="flow-row">
+      <span class="flow-label">INTRO</span>
+      <div class="flow-chord">Fm11/C</div>
+      <span class="flow-arrow">⟷</span>
+      <div class="flow-chord">Gm/D</div>
+      <span class="flow-annotation">← SD代理のループ（解決なし）</span>
+    </div>
+
+    <div class="flow-row">
+      <span class="flow-label">VERSE</span>
+      <div class="flow-chord">A♭/B♭</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-chord highlight">E♭maj7</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-chord">Em7♭5</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-chord">A♭/B♭</div>
+      <span class="flow-arrow">→ …</span>
+      <span class="flow-annotation">← IV/V→I解決 × 繰り返し</span>
+    </div>
+
+    <div class="flow-row">
+      <span class="flow-label">PRE-CHO</span>
+      <div class="flow-chord">A♭/B♭</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-chord highlight">E♭maj7</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-chord" style="background:#e8e0f5;border-color:#c4b0e8">C7/E</div>
+      <span class="flow-annotation">← V7/vi セカンダリードミナント → コーラスドライブ</span>
+    </div>
+
+    <div class="flow-row">
+      <span class="flow-label">CHORUS</span>
+      <div class="flow-chord">Fm7</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-chord">A♭/B♭</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-chord">Cm7</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-chord" style="background:#e8e0f5;border-color:#c4b0e8">C7/E</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-chord">Adim7</div>
+      <span class="flow-annotation">← dim passthrough → 次へ</span>
+    </div>
+
+    <div class="flow-row">
+      <span class="flow-label">HOOK / OUT</span>
+      <div class="flow-chord">Fm11</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-chord">Gm7</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-chord">A♭/B♭</div>
+      <span class="flow-arrow">→</span>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:0.8rem;color:var(--text-dim)">N.C.</span>
+      <span class="flow-annotation">← イントロ回帰・循環の完結</span>
+    </div>
+  </div>
+
+  <!-- KEY MOMENTS -->
+  <div class="key-moments">
+    <h3>★ ハーモニクス・ハイライト</h3>
+    <div class="moment">
+      <span class="moment-chord">A♭/B♭</span>
+      <span class="moment-desc">この曲の最重要コード。上声IVmaj7 + ベースV7 = ドミナント感を保ちつつ解決しない緊張。「breezy feel」の源。</span>
+    </div>
+    <div class="moment">
+      <span class="moment-chord">Em7♭5</span>
+      <span class="moment-desc">E♭に対してクロマティック（半音上）。ダイアトニック外の影。Verseのラストを毎回クセのある色彩で締める。</span>
+    </div>
+    <div class="moment">
+      <span class="moment-chord">C7/E</span>
+      <span class="moment-desc">セカンダリードミナント (V7/vi)。Eベースがクロマティック下降ラインを形成。Pre-Chorusからコーラスへの「引力」を生む。</span>
+    </div>
+    <div class="moment">
+      <span class="moment-chord">Adim7</span>
+      <span class="moment-desc">ディミニッシュセブンスは全音程が短3度。B♭7の代理として機能し、コーラス末をドラマチックに締め、次のFm11へ自然に流れる。</span>
+    </div>
+    <div class="moment">
+      <span class="moment-chord">Fm11 (回帰)</span>
+      <span class="moment-desc">イントロと同コードでHook開始。「循環」が完結する感動的瞬間。11thの開放的な響きが「so easy」の歌詞と完璧にマッチ。</span>
+    </div>
+  </div>
+
+  <!-- THEORY GRID -->
+  <div class="theory-grid">
+    <div class="theory-card">
+      <h3>🎹 使われている主なテクニック</h3>
+      <ul>
+        <li>ペダルポイント — B♭を固定ベースにA♭を乗せる</li>
+        <li>ポリコード — A♭/B♭で上下部を分離</li>
+        <li>セカンダリードミナント — C7でCmへ誘導</li>
+        <li>クロマティックパッシング — Em7♭5, Adim7</li>
+        <li>11th・maj7コード — モダンR&Bサウンド</li>
+        <li>斜線コード（スラッシュコード）でベースライン構築</li>
+      </ul>
+    </div>
+    <div class="theory-card">
+      <h3>🎸 E♭キーの特徴</h3>
+      <ul>
+        <li>フラット3つ (B♭, E♭, A♭) — 管楽器に最適</li>
+        <li>ジャズ・R&B・ゴスペルで最頻出のキー</li>
+        <li>Fm11とEbmaj7の往復が基軸リズム</li>
+        <li>Cmはトニック代理として感情軸を担う</li>
+        <li>A♭/B♭ はE♭のIV/Vで「浮遊感」のコア</li>
+      </ul>
+    </div>
+    <div class="theory-card">
+      <h3>🌊 曲全体のハーモニックリズム</h3>
+      <p style="font-size:0.78rem;color:var(--text-dim);line-height:1.7">
+        1〜2小節に1コードという、ゆったりしたハーモニックリズムが基本。モダンR&Bの特徴で「コードよりグルーヴが主役」。コードが大きく動く瞬間（C7/E→Fm7、Adim7）が感情のピークと完全に一致している。
+      </p>
+    </div>
+    <div class="theory-card">
+      <h3>✨ Olivia Dean サウンドの特徴</h3>
+      <p style="font-size:0.78rem;color:var(--text-dim);line-height:1.7">
+        ネオソウル・インディーポップのクロスオーバー。拡張コード（7th, 9th, 11th）を多用しながらも歌いやすいメロディーを保つ。クロマティックな彩りをさりげなく挿入するのが彼女の作曲スタイル。Em7♭5とC7/Eがその典型例。
+      </p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
