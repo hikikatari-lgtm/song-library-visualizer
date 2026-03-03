@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Angelina — Tommy Emmanuel コード進行</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f4ee;
+    --bg2: #eeebe2;
+    --card: #ffffff;
+    --border: #ddd8cc;
+    --ink: #1c1a14;
+    --dim: #8a8070;
+    --light: #c4bfb2;
+
+    /* Section colors */
+    --intro:   #2c5f8a;
+    --verse:   #2e7d52;
+    --chorus:  #8a2c2c;
+    --bridge:  #6a4c93;
+    --outro:   #5a5040;
+
+    /* Chord function colors */
+    --T:  #2c6e49;
+    --S:  #1d4e89;
+    --D:  #9b2226;
+    --Tp: #4a7c59;
+    --Chr:#7c4a1e;
+    --sec:#6a3c93;
+
+    --gold: #b8860b;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Noto Sans JP', sans-serif;
+    padding: 44px 20px 80px;
+  }
+
+  /* paper texture */
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+    pointer-events:none; z-index:0;
+  }
+
+  .page { max-width:920px; margin:0 auto; position:relative; z-index:1; }
+
+  /* ── HEADER ── */
+  header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 20px;
+    border-bottom: 2.5px solid var(--ink);
+    padding-bottom: 18px;
+    margin-bottom: 36px;
+    animation: fadeDown 0.6s ease;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.8rem, 7vw, 5rem);
+    letter-spacing: 0.06em;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .header-meta {
+    text-align: right;
+    line-height: 1.7;
+    font-size: 0.78rem;
+    color: var(--dim);
+  }
+
+  .header-meta strong {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.95rem;
+    color: var(--gold);
+    letter-spacing: 0.08em;
+  }
+
+  /* ── META PILLS ── */
+  .meta-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+    animation: fadeUp 0.5s ease 0.1s both;
+  }
+
+  .meta-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    padding: 5px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.08em;
+    border: 1px solid;
+  }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    padding: 12px 18px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 28px;
+    animation: fadeUp 0.5s ease 0.15s both;
+  }
+
+  .leg-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    color: var(--dim);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .leg-swatch { width:12px; height:6px; border-radius:3px; }
+
+  /* ── SECTION BLOCK ── */
+  .section-block {
+    margin-bottom: 24px;
+    animation: fadeUp 0.55s ease both;
+  }
+
+  .sec-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .sec-tag {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.14em;
+    padding: 4px 14px;
+    border-radius: 5px;
+    color: white;
+  }
+
+  .sec-desc {
+    font-size: 0.75rem;
+    color: var(--dim);
+    font-style: italic;
+    font-weight: 300;
+  }
+
+  /* ── CHORD GRID ── */
+  .chord-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .chord-row {
+    display: grid;
+    gap: 8px;
+  }
+
+  .cols-4 { grid-template-columns: repeat(4, 1fr); }
+  .cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .cols-6 { grid-template-columns: repeat(6, 1fr); }
+  .cols-8 { grid-template-columns: repeat(8, 1fr); }
+
+  .chord-cell {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--fn-color, var(--border));
+    border-radius: 8px;
+    padding: 10px 12px;
+    transition: box-shadow 0.15s, transform 0.15s;
+    position: relative;
+  }
+
+  .chord-cell:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    transform: translateY(-1px);
+  }
+
+  .chord-cell.rest {
+    background: var(--bg2);
+    border-top-color: var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .rest-sym {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--light);
+    letter-spacing: 3px;
+  }
+
+  .c-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .c-name sup {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.45em;
+    vertical-align: super;
+    color: var(--fn-color, var(--dim));
+  }
+
+  .c-tags {
+    display: flex;
+    gap: 3px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+  }
+
+  .c-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  .t-deg  { background: rgba(0,0,0,0.05); color: var(--dim); }
+  .t-fn   { color: white; font-weight: 500; }
+
+  .c-note {
+    font-size: 0.65rem;
+    color: var(--dim);
+    line-height: 1.4;
+    font-weight: 300;
+  }
+
+  /* ── FLOW DIAGRAM ── */
+  .flow-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--gold);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 28px 0;
+    animation: fadeUp 0.5s ease 0.5s both;
+  }
+
+  .flow-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed var(--border);
+  }
+
+  .flow-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+  .flow-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--dim);
+    min-width: 80px;
+    letter-spacing: 0.06em;
+  }
+
+  .flow-chord {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+    padding: 3px 9px;
+    border-radius: 4px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  .flow-chord.key { background: var(--ink); color: white; border-color: var(--ink); }
+
+  .flow-arrow { color: var(--light); font-size: 0.8rem; }
+
+  /* ── THEORY BOX ── */
+  .theory-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 24px;
+    animation: fadeUp 0.5s ease 0.6s both;
+  }
+
+  .theory-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+
+  .theory-card h3 {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.16em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    padding-bottom: 7px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .theory-card ul { list-style: none; }
+  .theory-card ul li {
+    font-size: 0.74rem;
+    color: var(--dim);
+    line-height: 1.75;
+  }
+  .theory-card ul li::before {
+    content: '— ';
+    color: var(--gold);
+    font-family: 'DM Mono', monospace;
+  }
+  .theory-card p {
+    font-size: 0.74rem;
+    color: var(--dim);
+    line-height: 1.75;
+  }
+  .theory-card strong { color: var(--ink); font-weight: 500; }
+
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-14px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeUp   { from{opacity:0;transform:translateY(14px)}  to{opacity:1;transform:translateY(0)} }
+
+  @media(max-width:640px){
+    .cols-4,.cols-6,.cols-8 { grid-template-columns: repeat(2,1fr); }
+    .cols-3 { grid-template-columns: repeat(2,1fr); }
+    header { grid-template-columns: 1fr; }
+    .header-meta { text-align: left; }
+    .theory-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <header>
+    <h1>Angelina</h1>
+    <div class="header-meta">
+      <strong>Key = D Major（実音 E♭）</strong>
+      Tommy Emmanuel<br>
+      Album: Endless Road (2004)<br>
+      Tuning: Dropped D / Capo 2nd Fret
+    </div>
+  </header>
+
+  <!-- META PILLS -->
+  <div class="meta-row">
+    <span class="meta-pill" style="background:rgba(44,95,138,0.1);color:#2c5f8a;border-color:rgba(44,95,138,0.3)">♩ = 64</span>
+    <span class="meta-pill" style="background:rgba(184,134,11,0.1);color:#b8860b;border-color:rgba(184,134,11,0.3)">DROPPED D Tuning</span>
+    <span class="meta-pill" style="background:rgba(46,125,82,0.1);color:#2e7d52;border-color:rgba(46,125,82,0.3)">CAPO 2nd Fret</span>
+    <span class="meta-pill" style="background:rgba(138,44,44,0.1);color:#8a2c2c;border-color:rgba(138,44,44,0.3)">4/4 拍子</span>
+    <span class="meta-pill" style="background:rgba(90,80,64,0.1);color:#5a5040;border-color:rgba(90,80,64,0.3)">8 Pages / Solo Guitar</span>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="leg-item"><div class="leg-swatch" style="background:var(--T)"></div>Tonic (T)</div>
+    <div class="leg-item"><div class="leg-swatch" style="background:var(--Tp)"></div>Tonic代理 (Tp)</div>
+    <div class="leg-item"><div class="leg-swatch" style="background:var(--S)"></div>Subdominant (S)</div>
+    <div class="leg-item"><div class="leg-swatch" style="background:var(--D)"></div>Dominant (D)</div>
+    <div class="leg-item"><div class="leg-swatch" style="background:var(--sec)"></div>Secondary Dom.</div>
+    <div class="leg-item"><div class="leg-swatch" style="background:var(--Chr)"></div>Chromatic</div>
+  </div>
+
+  <!-- ══════ A: INTRO ══════ -->
+  <div class="section-block" style="animation-delay:0.1s">
+    <div class="sec-header">
+      <span class="sec-tag" style="background:var(--intro)">A — Intro</span>
+      <span class="sec-desc">主旋律テーマ。D–F♯m–G–A の循環。Dropped Dで開放弦を最大活用。</span>
+    </div>
+    <div class="chord-grid">
+      <div class="chord-row cols-4">
+        <div class="chord-cell" style="--fn-color:var(--T)">
+          <div class="c-name">D</div>
+          <div class="c-tags"><span class="c-tag t-deg">I</span><span class="c-tag t-fn" style="background:var(--T)">T</span></div>
+          <div class="c-note">主和音。開放弦D(低)が鳴り響く。</div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--Tp)">
+          <div class="c-name">F♯<sup>m</sup></div>
+          <div class="c-tags"><span class="c-tag t-deg">IIIm</span><span class="c-tag t-fn" style="background:var(--Tp)">Tp</span></div>
+          <div class="c-note">トニック代理。明暗の中間色。</div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--S)">
+          <div class="c-name">G</div>
+          <div class="c-tags"><span class="c-tag t-deg">IV</span><span class="c-tag t-fn" style="background:var(--S)">S</span></div>
+          <div class="c-note">サブドミナント。開放弦G活用。</div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--D)">
+          <div class="c-name">A</div>
+          <div class="c-tags"><span class="c-tag t-deg">V</span><span class="c-tag t-fn" style="background:var(--D)">D</span></div>
+          <div class="c-note">ドミナント。完全5度でDへ解決。</div>
+        </div>
+      </div>
+      <div class="chord-row cols-4">
+        <div class="chord-cell" style="--fn-color:var(--T)">
+          <div class="c-name">D</div>
+          <div class="c-tags"><span class="c-tag t-deg">I</span><span class="c-tag t-fn" style="background:var(--T)">T</span></div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--Tp)">
+          <div class="c-name">F♯<sup>m</sup></div>
+          <div class="c-tags"><span class="c-tag t-deg">IIIm</span><span class="c-tag t-fn" style="background:var(--Tp)">Tp</span></div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--S)">
+          <div class="c-name">G</div>
+          <div class="c-tags"><span class="c-tag t-deg">IV</span><span class="c-tag t-fn" style="background:var(--S)">S</span></div>
+        </div>
+        <div class="chord-cell rest"><span class="rest-sym">/ / / /</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ B: VERSE A (1st) ══════ -->
+  <div class="section-block" style="animation-delay:0.18s">
+    <div class="sec-header">
+      <span class="sec-tag" style="background:var(--verse)">B — Verse A</span>
+      <span class="sec-desc">メロディ開始。B♭°のクロマティックパッシングが独特の色彩を加える。</span>
+    </div>
+    <div class="chord-grid">
+      <div class="chord-row cols-4">
+        <div class="chord-cell" style="--fn-color:var(--T)">
+          <div class="c-name">D</div>
+          <div class="c-tags"><span class="c-tag t-deg">I</span><span class="c-tag t-fn" style="background:var(--T)">T</span></div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--Tp)">
+          <div class="c-name">F♯<sup>m</sup></div>
+          <div class="c-tags"><span class="c-tag t-deg">IIIm</span><span class="c-tag t-fn" style="background:var(--Tp)">Tp</span></div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--S)">
+          <div class="c-name">G</div>
+          <div class="c-tags"><span class="c-tag t-deg">IV</span><span class="c-tag t-fn" style="background:var(--S)">S</span></div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--Chr)">
+          <div class="c-name">B♭<sup>°</sup></div>
+          <div class="c-tags"><span class="c-tag t-deg">♭VIdim</span><span class="c-tag t-fn" style="background:var(--Chr)">Chr</span></div>
+          <div class="c-note">クロマティックパッシング。Bmへの半音アプローチ。</div>
+        </div>
+      </div>
+      <div class="chord-row cols-4">
+        <div class="chord-cell" style="--fn-color:var(--Tp)">
+          <div class="c-name">Bm</div>
+          <div class="c-tags"><span class="c-tag t-deg">VIm</span><span class="c-tag t-fn" style="background:var(--Tp)">Tp</span></div>
+          <div class="c-note">相対マイナー。感情的深み。</div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--S)">
+          <div class="c-name">Cadd9</div>
+          <div class="c-tags"><span class="c-tag t-deg">♭VII</span><span class="c-tag t-fn" style="background:var(--Chr)">Chr</span></div>
+          <div class="c-note">ダイアトニック外。モーダルカラー。</div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--S)">
+          <div class="c-name">Fadd6</div>
+          <div class="c-tags"><span class="c-tag t-deg">♭III</span><span class="c-tag t-fn" style="background:var(--Chr)">Chr</span></div>
+          <div class="c-note">ミクソリディアン/モーダル借用。</div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--D)">
+          <div class="c-name">E7 A7<sup>sus4</sup></div>
+          <div class="c-tags"><span class="c-tag t-deg">II7/V7sus</span><span class="c-tag t-fn" style="background:var(--D)">D→D</span></div>
+          <div class="c-note">E7はセカンダリードミナント(V/A)。A7sus4でさらに引っ張る。</div>
+        </div>
+      </div>
+      <!-- 2nd half of verse A -->
+      <div class="chord-row cols-4">
+        <div class="chord-cell" style="--fn-color:var(--T)">
+          <div class="c-name">D</div>
+          <div class="c-tags"><span class="c-tag t-deg">I</span><span class="c-tag t-fn" style="background:var(--T)">T</span></div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--Tp)">
+          <div class="c-name">F♯<sup>m</sup></div>
+          <div class="c-tags"><span class="c-tag t-deg">IIIm</span><span class="c-tag t-fn" style="background:var(--Tp)">Tp</span></div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--Tp)">
+          <div class="c-name">Bm7</div>
+          <div class="c-tags"><span class="c-tag t-deg">VIm7</span><span class="c-tag t-fn" style="background:var(--Tp)">Tp</span></div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--Chr)">
+          <div class="c-name">B♭<sup>°</sup></div>
+          <div class="c-tags"><span class="c-tag t-deg">♭VIdim</span><span class="c-tag t-fn" style="background:var(--Chr)">Chr</span></div>
+        </div>
+      </div>
+      <div class="chord-row cols-4">
+        <div class="chord-cell" style="--fn-color:var(--D)">
+          <div class="c-name">A</div>
+          <div class="c-tags"><span class="c-tag t-deg">V</span><span class="c-tag t-fn" style="background:var(--D)">D</span></div>
+        </div>
+        <div class="chord-cell rest"><span class="rest-sym">/ / / /</span></div>
+        <div class="chord-cell" style="--fn-color:var(--sec)">
+          <div class="c-name">E7</div>
+          <div class="c-tags"><span class="c-tag t-deg">II7</span><span class="c-tag t-fn" style="background:var(--sec)">V/V</span></div>
+          <div class="c-note">セカンダリードミナント。AへのV7。</div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--D)">
+          <div class="c-name">A</div>
+          <div class="c-tags"><span class="c-tag t-deg">V</span><span class="c-tag t-fn" style="background:var(--D)">D</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ C/G: VERSE B ══════ -->
+  <div class="section-block" style="animation-delay:0.26s">
+    <div class="sec-header">
+      <span class="sec-tag" style="background:var(--verse)">C/G — Verse B</span>
+      <span class="sec-desc">Verse Aと同構造。後半に D–Em7–F♯m7–Gadd6 のクロマティック上昇が追加。</span>
+    </div>
+    <div class="chord-grid">
+      <div class="chord-row cols-4">
+        <div class="chord-cell" style="--fn-color:var(--T)"><div class="c-name">D</div><div class="c-tags"><span class="c-tag t-deg">I</span><span class="c-tag t-fn" style="background:var(--T)">T</span></div></div>
+        <div class="chord-cell" style="--fn-color:var(--Tp)"><div class="c-name">F♯<sup>m</sup></div><div class="c-tags"><span class="c-tag t-deg">IIIm</span><span class="c-tag t-fn" style="background:var(--Tp)">Tp</span></div></div>
+        <div class="chord-cell" style="--fn-color:var(--S)"><div class="c-name">G</div><div class="c-tags"><span class="c-tag t-deg">IV</span><span class="c-tag t-fn" style="background:var(--S)">S</span></div></div>
+        <div class="chord-cell" style="--fn-color:var(--Chr)"><div class="c-name">B♭<sup>°</sup></div><div class="c-tags"><span class="c-tag t-deg">♭VIdim</span><span class="c-tag t-fn" style="background:var(--Chr)">Chr</span></div></div>
+      </div>
+      <div class="chord-row cols-4">
+        <div class="chord-cell" style="--fn-color:var(--Tp)"><div class="c-name">Bm</div><div class="c-tags"><span class="c-tag t-deg">VIm</span><span class="c-tag t-fn" style="background:var(--Tp)">Tp</span></div></div>
+        <div class="chord-cell" style="--fn-color:var(--Chr)"><div class="c-name">Cadd9</div><div class="c-tags"><span class="c-tag t-deg">♭VII</span><span class="c-tag t-fn" style="background:var(--Chr)">Chr</span></div></div>
+        <div class="chord-cell" style="--fn-color:var(--Chr)"><div class="c-name">Fadd6</div><div class="c-tags"><span class="c-tag t-deg">♭III</span><span class="c-tag t-fn" style="background:var(--Chr)">Chr</span></div></div>
+        <div class="chord-cell" style="--fn-color:var(--D)"><div class="c-name">E7 A7<sup>sus4</sup></div><div class="c-tags"><span class="c-tag t-deg">V/V → Vsus</span><span class="c-tag t-fn" style="background:var(--D)">D</span></div></div>
+      </div>
+      <!-- Chromatic ascent: D Em7 F#m7 Gadd6 -->
+      <div class="chord-row cols-4">
+        <div class="chord-cell" style="--fn-color:var(--T)">
+          <div class="c-name">D</div>
+          <div class="c-tags"><span class="c-tag t-deg">I</span><span class="c-tag t-fn" style="background:var(--T)">T</span></div>
+          <div class="c-note">上昇ラインの起点</div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--S)">
+          <div class="c-name">Em7</div>
+          <div class="c-tags"><span class="c-tag t-deg">IIm7</span><span class="c-tag t-fn" style="background:var(--S)">S</span></div>
+          <div class="c-note">クロマティック上昇 ②</div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--Tp)">
+          <div class="c-name">F♯<sup>m7</sup></div>
+          <div class="c-tags"><span class="c-tag t-deg">IIIm7</span><span class="c-tag t-fn" style="background:var(--Tp)">Tp</span></div>
+          <div class="c-note">クロマティック上昇 ③</div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--S)">
+          <div class="c-name">Gadd6</div>
+          <div class="c-tags"><span class="c-tag t-deg">IVadd6</span><span class="c-tag t-fn" style="background:var(--S)">S</span></div>
+          <div class="c-note">クロマティック上昇 ④ 頂点</div>
+        </div>
+      </div>
+      <div class="chord-row cols-2">
+        <div class="chord-cell" style="--fn-color:var(--Chr)">
+          <div class="c-name">Fmaj7</div>
+          <div class="c-tags"><span class="c-tag t-deg">♭IIImaj7</span><span class="c-tag t-fn" style="background:var(--Chr)">Chr</span></div>
+          <div class="c-note">モーダルインターチェンジ（Dミクソリディアン）。エモーショナルなクライマックス前の色彩。</div>
+        </div>
+        <div class="chord-cell rest"><span class="rest-sym">→ Chorus へ</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ D/E/H/I: CHORUS ══════ -->
+  <div class="section-block" style="animation-delay:0.34s">
+    <div class="sec-header">
+      <span class="sec-tag" style="background:var(--chorus)">D/E/H/I — Chorus</span>
+      <span class="sec-desc">Bm–B♭–D/A–E7 のサイクル。B♭が半音下降のカラーコード。D/A はペダルポイント。</span>
+    </div>
+    <div class="chord-grid">
+      <div class="chord-row cols-4">
+        <div class="chord-cell" style="--fn-color:var(--Tp)">
+          <div class="c-name">Bm</div>
+          <div class="c-tags"><span class="c-tag t-deg">VIm</span><span class="c-tag t-fn" style="background:var(--Tp)">Tp</span></div>
+          <div class="c-note">サビ開始。マイナーの哀愁。</div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--Chr)">
+          <div class="c-name">B♭</div>
+          <div class="c-tags"><span class="c-tag t-deg">♭VI</span><span class="c-tag t-fn" style="background:var(--Chr)">Chr</span></div>
+          <div class="c-note">半音下降クロマティック。ドラマチックな色彩変化。</div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--T)">
+          <div class="c-name">D/A</div>
+          <div class="c-tags"><span class="c-tag t-deg">I/5</span><span class="c-tag t-fn" style="background:var(--T)">T</span></div>
+          <div class="c-note">Aをベースに置いたD。ペダルポイント効果。</div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--sec)">
+          <div class="c-name">E7</div>
+          <div class="c-tags"><span class="c-tag t-deg">II7</span><span class="c-tag t-fn" style="background:var(--sec)">V/V</span></div>
+          <div class="c-note">セカンダリードミナント。AへのV7。強力なプッシュ。</div>
+        </div>
+      </div>
+      <div class="chord-row cols-4">
+        <div class="chord-cell" style="--fn-color:var(--S)">
+          <div class="c-name">G</div>
+          <div class="c-tags"><span class="c-tag t-deg">IV</span><span class="c-tag t-fn" style="background:var(--S)">S</span></div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--T)">
+          <div class="c-name">D/F♯</div>
+          <div class="c-tags"><span class="c-tag t-deg">I/3</span><span class="c-tag t-fn" style="background:var(--T)">T</span></div>
+          <div class="c-note">F♯ベースライン下降。Voice leadingの美しさ。</div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--Tp)">
+          <div class="c-name">Bm7</div>
+          <div class="c-tags"><span class="c-tag t-deg">VIm7</span><span class="c-tag t-fn" style="background:var(--Tp)">Tp</span></div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--S)">
+          <div class="c-name">G</div>
+          <div class="c-tags"><span class="c-tag t-deg">IV</span><span class="c-tag t-fn" style="background:var(--S)">S</span></div>
+        </div>
+      </div>
+      <div class="chord-row cols-4">
+        <div class="chord-cell" style="--fn-color:var(--S)">
+          <div class="c-name">Em7</div>
+          <div class="c-tags"><span class="c-tag t-deg">IIm7</span><span class="c-tag t-fn" style="background:var(--S)">S</span></div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--Chr)">
+          <div class="c-name">F♯7+5</div>
+          <div class="c-tags"><span class="c-tag t-deg">III7aug</span><span class="c-tag t-fn" style="background:var(--Chr)">Chr</span></div>
+          <div class="c-note">オーギュメント7th。Bmへの強烈なセカンダリードミナント。</div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--Tp)">
+          <div class="c-name">Bm</div>
+          <div class="c-tags"><span class="c-tag t-deg">VIm</span><span class="c-tag t-fn" style="background:var(--Tp)">Tp</span></div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--Chr)">
+          <div class="c-name">B♭</div>
+          <div class="c-tags"><span class="c-tag t-deg">♭VI</span><span class="c-tag t-fn" style="background:var(--Chr)">Chr</span></div>
+        </div>
+      </div>
+      <!-- Chorus turnaround -->
+      <div class="chord-row cols-4">
+        <div class="chord-cell" style="--fn-color:var(--T)">
+          <div class="c-name">D/A</div>
+          <div class="c-tags"><span class="c-tag t-deg">I/5</span><span class="c-tag t-fn" style="background:var(--T)">T</span></div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--sec)">
+          <div class="c-name">E7</div>
+          <div class="c-tags"><span class="c-tag t-deg">II7</span><span class="c-tag t-fn" style="background:var(--sec)">V/V</span></div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--Chr)">
+          <div class="c-name">Dm/A</div>
+          <div class="c-tags"><span class="c-tag t-deg">Im/5</span><span class="c-tag t-fn" style="background:var(--Chr)">Chr</span></div>
+          <div class="c-note">一時的なマイナー転調。暗雲の瞬間。</div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--T)">
+          <div class="c-name">Aadd9</div>
+          <div class="c-tags"><span class="c-tag t-deg">Vadd9</span><span class="c-tag t-fn" style="background:var(--D)">D</span></div>
+          <div class="c-note">9thを加えた開放的な解決。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ L: OUTRO ══════ -->
+  <div class="section-block" style="animation-delay:0.42s">
+    <div class="sec-header">
+      <span class="sec-tag" style="background:var(--outro)">L — Outro</span>
+      <span class="sec-desc">D–Gadd6–Fadd6–D でシンプルに締め。ハーモニクス（N.H.）で幻想的に終止。</span>
+    </div>
+    <div class="chord-grid">
+      <div class="chord-row cols-4">
+        <div class="chord-cell" style="--fn-color:var(--T)">
+          <div class="c-name">D</div>
+          <div class="c-tags"><span class="c-tag t-deg">I</span><span class="c-tag t-fn" style="background:var(--T)">T</span></div>
+          <div class="c-note">アウトロ開始</div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--S)">
+          <div class="c-name">Gadd6</div>
+          <div class="c-tags"><span class="c-tag t-deg">IVadd6</span><span class="c-tag t-fn" style="background:var(--S)">S</span></div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--Chr)">
+          <div class="c-name">Fadd6</div>
+          <div class="c-tags"><span class="c-tag t-deg">♭IIIadd6</span><span class="c-tag t-fn" style="background:var(--Chr)">Chr</span></div>
+          <div class="c-note">ミクソリディアン借用。郷愁感。</div>
+        </div>
+        <div class="chord-cell" style="--fn-color:var(--T)">
+          <div class="c-name">D <span style="font-size:0.5em;font-family:'DM Mono',monospace;color:var(--gold)">N.H.</span></div>
+          <div class="c-tags"><span class="c-tag t-deg">I</span><span class="c-tag t-fn" style="background:var(--T)">T</span></div>
+          <div class="c-note">ナチュラルハーモニクスで幻想的に終止。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOW DIAGRAM -->
+  <div class="flow-section">
+    <div class="flow-title">楽曲全体構成フロー</div>
+
+    <div class="flow-row">
+      <span class="flow-label">A Intro</span>
+      <div class="flow-chord key">D</div><span class="flow-arrow">→</span>
+      <div class="flow-chord">F♯m</div><span class="flow-arrow">→</span>
+      <div class="flow-chord">G</div><span class="flow-arrow">→</span>
+      <div class="flow-chord">A</div><span class="flow-arrow">→ ×2</span>
+    </div>
+
+    <div class="flow-row">
+      <span class="flow-label">B Verse A</span>
+      <div class="flow-chord">D</div><span class="flow-arrow">→</span>
+      <div class="flow-chord">F♯m</div><span class="flow-arrow">→</span>
+      <div class="flow-chord">G</div><span class="flow-arrow">→</span>
+      <div class="flow-chord" style="background:#f4ece0;border-color:#d4b08a">B♭°</div><span class="flow-arrow">→</span>
+      <div class="flow-chord">Bm</div><span class="flow-arrow">→</span>
+      <div class="flow-chord" style="background:#f4ece0;border-color:#d4b08a">Cadd9</div><span class="flow-arrow">→</span>
+      <div class="flow-chord" style="background:#f4ece0;border-color:#d4b08a">Fadd6</div><span class="flow-arrow">→</span>
+      <div class="flow-chord">E7→A7sus4</div>
+    </div>
+
+    <div class="flow-row">
+      <span class="flow-label">C Verse B+</span>
+      <div class="flow-chord">D</div><span class="flow-arrow">→</span>
+      <div class="flow-chord">Em7</div><span class="flow-arrow">→</span>
+      <div class="flow-chord">F♯m7</div><span class="flow-arrow">→</span>
+      <div class="flow-chord">Gadd6</div><span class="flow-arrow">→</span>
+      <div class="flow-chord" style="background:#f4ece0;border-color:#d4b08a">Fmaj7</div>
+      <span style="font-size:0.68rem;color:var(--gold);font-style:italic;margin-left:4px;">← 上昇ライン</span>
+    </div>
+
+    <div class="flow-row">
+      <span class="flow-label">D Chorus</span>
+      <div class="flow-chord">Bm</div><span class="flow-arrow">→</span>
+      <div class="flow-chord" style="background:#f4ece0;border-color:#d4b08a">B♭</div><span class="flow-arrow">→</span>
+      <div class="flow-chord">D/A</div><span class="flow-arrow">→</span>
+      <div class="flow-chord">E7</div><span class="flow-arrow">→</span>
+      <div class="flow-chord">G</div><span class="flow-arrow">→</span>
+      <div class="flow-chord">D/F♯</div><span class="flow-arrow">→</span>
+      <div class="flow-chord">Bm7</div><span class="flow-arrow">→</span>
+      <div class="flow-chord">Em7→F♯7+5</div>
+    </div>
+
+    <div class="flow-row">
+      <span class="flow-label">L Outro</span>
+      <div class="flow-chord key">D</div><span class="flow-arrow">→</span>
+      <div class="flow-chord">Gadd6</div><span class="flow-arrow">→</span>
+      <div class="flow-chord" style="background:#f4ece0;border-color:#d4b08a">Fadd6</div><span class="flow-arrow">→</span>
+      <div class="flow-chord key">D <span style="font-size:0.65em">N.H.</span></div>
+    </div>
+  </div>
+
+  <!-- THEORY GRID -->
+  <div class="theory-grid">
+    <div class="theory-card">
+      <h3>🎸 Tommy Emmanuel テクニック</h3>
+      <ul>
+        <li>Dropped D + Capo 2 = 実音 E♭</li>
+        <li>開放弦を和音の一部として多用</li>
+        <li>ベースライン（D→D/F♯→G）と内声部の独立</li>
+        <li>クロマティックパッシング（B♭°, Fmaj7）</li>
+        <li>ハーモニクス（N.H.）でアウトロ演出</li>
+        <li>F♯7+5 のオーギュメントドミナント</li>
+      </ul>
+    </div>
+    <div class="theory-card">
+      <h3>🎵 ハーモニー特徴</h3>
+      <ul>
+        <li><strong>B♭°/B♭</strong> — Dmに対してクロマティック借用</li>
+        <li><strong>Fmaj7/Fadd6</strong> — ♭IIIはDミクソリディアン由来</li>
+        <li><strong>Cadd9</strong> — ♭VII ミクソリディアン色彩</li>
+        <li><strong>F♯7+5</strong> — Bmへのセカンダリードミナント変形</li>
+        <li><strong>D Em7 F♯m7 Gadd6</strong> — 全音上昇クロマティックライン</li>
+        <li><strong>Dm/A</strong> — 一時的なトニックマイナー転換</li>
+      </ul>
+    </div>
+    <div class="theory-card">
+      <h3>📐 ベースライン解析（サビ）</h3>
+      <ul>
+        <li>Bm → B♭ → D/A → G → D/F♯ → Em7</li>
+        <li>B→B♭→A→G→F♯→E の半音・全音下降</li>
+        <li>クラシカルなクロマティックバスライン</li>
+        <li>6ステップで1オクターブ弱を下降</li>
+      </ul>
+    </div>
+    <div class="theory-card">
+      <h3>🔑 キー・スケール情報</h3>
+      <p>
+        <strong>記譜キー:</strong> D Major (実音 E♭ = Capo 2)<br>
+        <strong>使用スケール:</strong> D Major + Dミクソリディアン + 借用和音<br>
+        <strong>ペンタ:</strong> D Major Pentatonic が基本旋律<br>
+        <strong>テンポ:</strong> ♩=64 (Moderately slow, expressive)<br>
+        <strong>チューニング:</strong> Dropped D (D-A-D-G-B-e)
+      </p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
