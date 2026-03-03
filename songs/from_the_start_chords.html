@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>From The Start — Laufey | Key = D Major</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Noto+Sans+JP:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:    #0d0b08;
+    --s1:    #141209;
+    --card:  #1a180f;
+    --card2: #201e14;
+    --border: rgba(200,170,80,0.12);
+    --text:  #f0ead8;
+    --dim:   #7a6a40;
+    --light: #3a3020;
+
+    --gold:  #c8a84a;
+    --rose:  #c86060;
+    --sage:  #60a878;
+    --sky:   #60a0c8;
+    --lilac: #9878c8;
+
+    /* function */
+    --T:   #2d6e5e;
+    --IIm: #2a5a9e;
+    --IIIm:#6a3a9e;
+    --IV:  #2d7a3a;
+    --V:   #9e5a2a;
+    --VIm: #9e3a2a;
+    --Chr: #8a5a2a;
+    --sec: #6a2a8a;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    padding: 48px 20px 88px;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background:
+      radial-gradient(ellipse 60% 30% at 25% 5%, rgba(200,168,74,0.06), transparent),
+      radial-gradient(ellipse 50% 30% at 80% 85%, rgba(200,96,96,0.05), transparent);
+    pointer-events:none; z-index:0;
+  }
+
+  .page { max-width: 960px; margin: 0 auto; position:relative; z-index:1; }
+
+  /* ── HEADER ── */
+  header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 20px;
+    border-bottom: 1px solid rgba(200,168,74,0.25);
+    padding-bottom: 22px;
+    margin-bottom: 30px;
+    animation: fadeDown 0.7s ease;
+  }
+
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.26em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    opacity: 0.7;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.4rem, 6vw, 4.2rem);
+    font-weight: 700;
+    font-style: italic;
+    line-height: 1.05;
+    color: var(--text);
+    letter-spacing: 0.02em;
+  }
+
+  h1 em {
+    font-style: normal;
+    color: var(--gold);
+  }
+
+  .header-meta {
+    text-align: right;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--dim);
+    line-height: 1.9;
+  }
+
+  .key-badge {
+    font-size: 1.1rem;
+    color: var(--gold);
+    display: block;
+    letter-spacing: 0.08em;
+    margin-bottom: 3px;
+  }
+
+  /* ── META ── */
+  .meta-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+    animation: fadeUp 0.5s ease 0.1s both;
+  }
+
+  .mp {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.63rem;
+    padding: 4px 12px;
+    border-radius: 16px;
+    letter-spacing: 0.07em;
+    border: 1px solid;
+  }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    padding: 10px 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 32px;
+    animation: fadeUp 0.5s ease 0.15s both;
+  }
+
+  .leg { display:flex; align-items:center; gap:5px; font-size:0.66rem; color:var(--dim); font-family:'DM Mono',monospace; }
+  .lsw { width:10px; height:5px; border-radius:3px; }
+
+  /* ── SECTION ── */
+  .sec-block {
+    margin-bottom: 28px;
+    animation: fadeUp 0.55s ease both;
+  }
+
+  .sec-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .sec-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 4px;
+    color: white;
+    font-weight: 500;
+  }
+
+  .sec-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    font-style: italic;
+    color: var(--dim);
+  }
+
+  /* ── CHORD GRID ── */
+  .crow-wrap { display:flex; flex-direction:column; gap:8px; }
+  .crow { display:grid; gap:8px; }
+  .c4 { grid-template-columns: repeat(4,1fr); }
+  .c3 { grid-template-columns: repeat(3,1fr); }
+  .c2 { grid-template-columns: repeat(2,1fr); }
+  .c5 { grid-template-columns: repeat(5,1fr); }
+  .c6 { grid-template-columns: repeat(6,1fr); }
+
+  .cc {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--fn, var(--border));
+    border-radius: 8px;
+    padding: 11px 13px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    cursor: default;
+  }
+
+  .cc:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(200,168,74,0.12);
+  }
+
+  .cc.rest {
+    background: var(--s1);
+    border-left-color: var(--border);
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  .rst { font-family:'DM Mono',monospace; font-size:0.8rem; color:var(--light); letter-spacing:3px; }
+
+  .cn {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 5px;
+    letter-spacing: 0.01em;
+  }
+
+  .cn sup {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.42em;
+    vertical-align: super;
+    color: var(--fn, var(--dim));
+    letter-spacing: 0;
+  }
+
+  .ctags { display:flex; gap:3px; flex-wrap:wrap; margin-bottom:4px; }
+
+  .ct {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.52rem;
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  .ct-deg { background: rgba(255,255,255,0.05); color: var(--dim); }
+  .ct-fn  { color: white; font-weight:500; }
+
+  .cnote {
+    font-size: 0.62rem;
+    color: var(--dim);
+    line-height: 1.5;
+    font-weight: 300;
+  }
+
+  /* ── CHORUS HIGHLIGHT ── */
+  .chorus-box {
+    background: var(--card);
+    border: 1px solid rgba(200,96,96,0.25);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .chorus-head {
+    background: rgba(200,96,96,0.1);
+    padding: 8px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+    color: var(--rose);
+    text-transform: uppercase;
+  }
+
+  .chorus-body { padding: 14px; display:flex; flex-direction:column; gap:8px; }
+
+  /* ── OUTRO SPECIAL ── */
+  .outro-box {
+    background: var(--card);
+    border: 1px solid rgba(152,120,200,0.25);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .outro-head {
+    background: rgba(152,120,200,0.1);
+    padding: 8px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+    color: var(--lilac);
+    text-transform: uppercase;
+  }
+
+  .outro-body { padding: 14px; display:flex; flex-direction:column; gap:8px; }
+
+  /* ── FLOW ── */
+  .flow-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: 2px solid var(--gold);
+    border-radius: 12px;
+    padding: 22px 24px;
+    margin: 32px 0;
+    animation: fadeUp 0.5s ease 0.5s both;
+  }
+
+  .flow-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .frow {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+    padding: 7px 0;
+    border-bottom: 1px dashed var(--border);
+  }
+
+  .frow:last-child { border-bottom:none; }
+
+  .flabel {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    color: var(--dim);
+    min-width: 96px;
+    letter-spacing: 0.05em;
+  }
+
+  .fc {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 3px 9px;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  .fc.hi  { background: rgba(200,168,74,0.15); color:var(--gold); border-color:rgba(200,168,74,0.3); }
+  .fc.ch  { background: rgba(200,96,96,0.12); color:var(--rose); border-color:rgba(200,96,96,0.25); }
+  .fc.chr { background: rgba(138,90,42,0.12); color:#d09060; border-color:rgba(138,90,42,0.25); }
+  .fc.out { background: rgba(152,120,200,0.12); color:var(--lilac); border-color:rgba(152,120,200,0.25); }
+
+  .farr  { color:var(--light); font-size:0.7rem; }
+  .fanno { font-size:0.62rem; color:var(--gold); font-style:italic; margin-left:4px; }
+
+  /* ── THEORY ── */
+  .theory-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 24px;
+    animation: fadeUp 0.5s ease 0.6s both;
+  }
+
+  .tcard {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+
+  .tcard h3 {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.16em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    padding-bottom: 7px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tcard ul { list-style:none; }
+  .tcard li, .tcard p { font-size:0.72rem; color:var(--dim); line-height:1.85; }
+  .tcard li::before { content:'— '; color:var(--gold); font-family:'DM Mono',monospace; }
+  .tcard strong { color:var(--text); font-weight:500; }
+
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-14px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeUp   { from{opacity:0;transform:translateY(12px)}  to{opacity:1;transform:translateY(0)} }
+
+  @media(max-width:620px) {
+    .c5,.c6,.c4 { grid-template-columns: repeat(2,1fr); }
+    .c3         { grid-template-columns: repeat(2,1fr); }
+    header      { grid-template-columns: 1fr; }
+    .header-meta { text-align:left; }
+    .theory-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <header>
+    <div>
+      <div class="eyebrow">Laufey — Bewitched (2023)</div>
+      <h1>From <em>The Start</em></h1>
+    </div>
+    <div class="header-meta">
+      <span class="key-badge">Key = D Major</span>
+      Music & Lyrics by Laufey & Spencer Stewart<br>
+      ♩ = 164（Moderately fast）<br>
+      Piano / Vocal / Guitar
+    </div>
+  </header>
+
+  <!-- META -->
+  <div class="meta-row">
+    <span class="mp" style="background:rgba(200,168,74,0.1);color:#c8a84a;border-color:rgba(200,168,74,0.25)">D Major / 2♯</span>
+    <span class="mp" style="background:rgba(200,96,96,0.1);color:#c86060;border-color:rgba(200,96,96,0.25)">♩ = 164</span>
+    <span class="mp" style="background:rgba(96,168,120,0.1);color:#60a878;border-color:rgba(96,168,120,0.25)">Jazz / Bossa Nova</span>
+    <span class="mp" style="background:rgba(96,160,200,0.1);color:#60a0c8;border-color:rgba(96,160,200,0.25)">拡張コード多用</span>
+    <span class="mp" style="background:rgba(152,120,200,0.1);color:#9878c8;border-color:rgba(152,120,200,0.25)">Outro: ♩=88 Slowly, freely</span>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="leg"><div class="lsw" style="background:var(--T)"></div>I / Tonic（D）</div>
+    <div class="leg"><div class="lsw" style="background:var(--IIm)"></div>IIm（Em）</div>
+    <div class="leg"><div class="lsw" style="background:var(--IV)"></div>IV（G）</div>
+    <div class="leg"><div class="lsw" style="background:var(--V)"></div>V（A）</div>
+    <div class="leg"><div class="lsw" style="background:var(--VIm)"></div>VIm（Bm）</div>
+    <div class="leg"><div class="lsw" style="background:var(--IIIm)"></div>IIIm（F♯m）</div>
+    <div class="leg"><div class="lsw" style="background:var(--sec)"></div>Secondary Dom.</div>
+    <div class="leg"><div class="lsw" style="background:var(--Chr)"></div>Chromatic / 借用</div>
+  </div>
+
+  <!-- ══════ INTRO ══════ -->
+  <div class="sec-block" style="animation-delay:0.08s">
+    <div class="sec-head">
+      <span class="sec-tag" style="background:#2a3a1a">Intro</span>
+      <span class="sec-desc">Em9 – A13 – Dmaj7 のジャズループ</span>
+    </div>
+    <div class="crow c3">
+      <div class="cc" style="--fn:var(--IIm)">
+        <div class="cn">Em<sup>9</sup></div>
+        <div class="ctags"><span class="ct ct-deg">IIm9</span><span class="ct ct-fn" style="background:var(--IIm)">IIm</span></div>
+        <div class="cnote">DメジャーのIIm9。ジャズ的な開口。</div>
+      </div>
+      <div class="cc" style="--fn:var(--V)">
+        <div class="cn">A<sup>13</sup></div>
+        <div class="ctags"><span class="ct ct-deg">V13</span><span class="ct ct-fn" style="background:var(--V)">V</span></div>
+        <div class="cnote">13thまで積んだドミナント。ジャズの香り。</div>
+      </div>
+      <div class="cc" style="--fn:var(--T)">
+        <div class="cn">Dmaj<sup>7</sup></div>
+        <div class="ctags"><span class="ct ct-deg">Imaj7</span><span class="ct ct-fn" style="background:var(--T)">T</span></div>
+        <div class="cnote">主和音。優雅な着地。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ VERSE ══════ -->
+  <div class="sec-block" style="animation-delay:0.13s">
+    <div class="sec-head">
+      <span class="sec-tag" style="background:#1a2a3a">Verse</span>
+      <span class="sec-desc">"Don't you notice how I get quiet…" — IIm–V–I ループ基調</span>
+    </div>
+    <div class="crow-wrap">
+      <!-- 基本ループ -->
+      <div class="crow c3">
+        <div class="cc" style="--fn:var(--IIm)">
+          <div class="cn">Em<sup>7</sup></div>
+          <div class="ctags"><span class="ct ct-deg">IIm7</span><span class="ct ct-fn" style="background:var(--IIm)">IIm</span></div>
+          <div class="cnote">Verseの軸。IIm7–V7–Imaj7。</div>
+        </div>
+        <div class="cc" style="--fn:var(--V)">
+          <div class="cn">A<sup>7</sup></div>
+          <div class="ctags"><span class="ct ct-deg">V7</span><span class="ct ct-fn" style="background:var(--V)">V</span></div>
+          <div class="cnote">ドミナント。DへのII–V–I。</div>
+        </div>
+        <div class="cc" style="--fn:var(--T)">
+          <div class="cn">Dmaj<sup>7</sup></div>
+          <div class="ctags"><span class="ct ct-deg">Imaj7</span><span class="ct ct-fn" style="background:var(--T)">T</span></div>
+          <div class="cnote">主和音解決。</div>
+        </div>
+      </div>
+      <!-- 拡張バージョン -->
+      <div class="crow c3">
+        <div class="cc" style="--fn:var(--IIm)">
+          <div class="cn">Em<sup>9</sup></div>
+          <div class="ctags"><span class="ct ct-deg">IIm9</span><span class="ct ct-fn" style="background:var(--IIm)">IIm</span></div>
+        </div>
+        <div class="cc" style="--fn:var(--V)">
+          <div class="cn">A<sup>13</sup></div>
+          <div class="ctags"><span class="ct ct-deg">V13</span><span class="ct ct-fn" style="background:var(--V)">V</span></div>
+        </div>
+        <div class="cc" style="--fn:var(--T)">
+          <div class="cn">Dmaj<sup>7</sup></div>
+          <div class="ctags"><span class="ct ct-deg">Imaj7</span><span class="ct ct-fn" style="background:var(--T)">T</span></div>
+        </div>
+      </div>
+      <!-- Pre-Chorus方向: Em9–A13–F#m7–B7#5 -->
+      <div class="crow c4">
+        <div class="cc" style="--fn:var(--IIm)">
+          <div class="cn">Em<sup>9</sup></div>
+          <div class="ctags"><span class="ct ct-deg">IIm9</span><span class="ct ct-fn" style="background:var(--IIm)">IIm</span></div>
+        </div>
+        <div class="cc" style="--fn:var(--V)">
+          <div class="cn">A<sup>13</sup></div>
+          <div class="ctags"><span class="ct ct-deg">V13</span><span class="ct ct-fn" style="background:var(--V)">V</span></div>
+        </div>
+        <div class="cc" style="--fn:var(--IIIm)">
+          <div class="cn">F♯m<sup>7</sup></div>
+          <div class="ctags"><span class="ct ct-deg">IIIm7</span><span class="ct ct-fn" style="background:var(--IIIm)">IIIm</span></div>
+          <div class="cnote">IIIm7。サビへの橋渡し。</div>
+        </div>
+        <div class="cc" style="--fn:var(--sec)">
+          <div class="cn">B7<sup>♯5</sup></div>
+          <div class="ctags"><span class="ct ct-deg">VI7♯5</span><span class="ct ct-fn" style="background:var(--sec)">V/IIm</span></div>
+          <div class="cnote">♯5増音。Em へのセカンダリードミナント。ジャズ的色彩。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ PRE-CHORUS ══════ -->
+  <div class="sec-block" style="animation-delay:0.18s">
+    <div class="sec-head">
+      <span class="sec-tag" style="background:#3a2a1a">Pre-Chorus</span>
+      <span class="sec-desc">"Oh, the burning pain…" — A13–Dmaj9–Em9 のライン</span>
+    </div>
+    <div class="crow-wrap">
+      <div class="crow c3">
+        <div class="cc" style="--fn:var(--IIm)">
+          <div class="cn">Em<sup>9</sup></div>
+          <div class="ctags"><span class="ct ct-deg">IIm9</span><span class="ct ct-fn" style="background:var(--IIm)">IIm</span></div>
+          <div class="cnote">"What's a girl to do?"</div>
+        </div>
+        <div class="cc" style="--fn:var(--V)">
+          <div class="cn">A<sup>13</sup></div>
+          <div class="ctags"><span class="ct ct-deg">V13</span><span class="ct ct-fn" style="background:var(--V)">V</span></div>
+          <div class="cnote">"listening to you harp…"</div>
+        </div>
+        <div class="cc" style="--fn:var(--T)">
+          <div class="cn">Dmaj<sup>9</sup></div>
+          <div class="ctags"><span class="ct ct-deg">Imaj9</span><span class="ct ct-fn" style="background:var(--T)">T</span></div>
+          <div class="cnote">9thを加えた主和音。広がり。</div>
+        </div>
+      </div>
+      <div class="crow c3">
+        <div class="cc" style="--fn:var(--IIm)">
+          <div class="cn">Em<sup>9</sup></div>
+          <div class="ctags"><span class="ct ct-deg">IIm9</span><span class="ct ct-fn" style="background:var(--IIm)">IIm</span></div>
+        </div>
+        <div class="cc" style="--fn:var(--V)">
+          <div class="cn">A<sup>13</sup></div>
+          <div class="ctags"><span class="ct ct-deg">V13</span><span class="ct ct-fn" style="background:var(--V)">V</span></div>
+        </div>
+        <div class="cc rest"><span class="rst">→ Chorus</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ CHORUS ══════ -->
+  <div class="sec-block" style="animation-delay:0.23s">
+    <div class="sec-head">
+      <span class="sec-tag" style="background:#3a1a1a">Chorus</span>
+      <span class="sec-desc">"Cupid walks right through and shoots an arrow…"</span>
+    </div>
+    <div class="chorus-box">
+      <div class="chorus-head">★ サビのコア — I–IIm–V–IIIm–VI7♯5 のジャズ進行</div>
+      <div class="chorus-body">
+        <!-- 前半 -->
+        <div class="crow c4">
+          <div class="cc" style="--fn:var(--T)">
+            <div class="cn">A<sup>13</sup></div>
+            <div class="ctags"><span class="ct ct-deg">V13</span><span class="ct ct-fn" style="background:var(--V)">V</span></div>
+            <div class="cnote">サビ入り。"Cupid walks"</div>
+          </div>
+          <div class="cc" style="--fn:var(--T)">
+            <div class="cn">Dmaj<sup>7</sup></div>
+            <div class="ctags"><span class="ct ct-deg">Imaj7</span><span class="ct ct-fn" style="background:var(--T)">T</span></div>
+            <div class="cnote">"right through"</div>
+          </div>
+          <div class="cc" style="--fn:var(--IIm)">
+            <div class="cn">Em<sup>9</sup></div>
+            <div class="ctags"><span class="ct ct-deg">IIm9</span><span class="ct ct-fn" style="background:var(--IIm)">IIm</span></div>
+            <div class="cnote">"shoots an arrow"</div>
+          </div>
+          <div class="cc" style="--fn:var(--V)">
+            <div class="cn">A<sup>13</sup></div>
+            <div class="ctags"><span class="ct ct-deg">V13</span><span class="ct ct-fn" style="background:var(--V)">V</span></div>
+            <div class="cnote">"through my heart"</div>
+          </div>
+        </div>
+        <!-- 後半 -->
+        <div class="crow c4">
+          <div class="cc" style="--fn:var(--T)">
+            <div class="cn">Dmaj<sup>13</sup></div>
+            <div class="ctags"><span class="ct ct-deg">Imaj13</span><span class="ct ct-fn" style="background:var(--T)">T</span></div>
+            <div class="cnote">"And I sound like a loon"。13thで煌めき。</div>
+          </div>
+          <div class="cc" style="--fn:var(--IIm)">
+            <div class="cn">Em<sup>9</sup></div>
+            <div class="ctags"><span class="ct ct-deg">IIm9</span><span class="ct ct-fn" style="background:var(--IIm)">IIm</span></div>
+            <div class="cnote">"but don't you feel"</div>
+          </div>
+          <div class="cc" style="--fn:var(--IIIm)">
+            <div class="cn">F♯m<sup>7</sup></div>
+            <div class="ctags"><span class="ct ct-deg">IIIm7</span><span class="ct ct-fn" style="background:var(--IIIm)">IIIm</span></div>
+            <div class="cnote">"it too?"</div>
+          </div>
+          <div class="cc" style="--fn:var(--sec)">
+            <div class="cn">B7<sup>♭9(♭13)</sup></div>
+            <div class="ctags"><span class="ct ct-deg">VI7♭9♭13</span><span class="ct ct-fn" style="background:var(--sec)">V/IIm</span></div>
+            <div class="cnote">♭9+♭13の高テンション。"Confess I loved"</div>
+          </div>
+        </div>
+        <!-- ケーデンス -->
+        <div class="crow c3">
+          <div class="cc" style="--fn:var(--IIm)">
+            <div class="cn">Em<sup>9</sup></div>
+            <div class="ctags"><span class="ct ct-deg">IIm9</span><span class="ct ct-fn" style="background:var(--IIm)">IIm</span></div>
+          </div>
+          <div class="cc" style="--fn:var(--V)">
+            <div class="cn">A<sup>13♭9</sup></div>
+            <div class="ctags"><span class="ct ct-deg">V13♭9</span><span class="ct ct-fn" style="background:var(--V)">V</span></div>
+            <div class="cnote">♭9追加で解決感を高める。"loved you from the"</div>
+          </div>
+          <div class="cc" style="--fn:var(--T)">
+            <div class="cn">D<sup>9/6</sup></div>
+            <div class="ctags"><span class="ct ct-deg">I9/6</span><span class="ct ct-fn" style="background:var(--T)">T</span></div>
+            <div class="cnote">"start." 9thと6thを同時に持つ豊かな終止。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ OUTRO ══════ -->
+  <div class="sec-block" style="animation-delay:0.30s">
+    <div class="sec-head">
+      <span class="sec-tag" style="background:#2a1a3a">Outro</span>
+      <span class="sec-desc">"I know I've loved you from the start." — Slowly, freely ♩=88</span>
+    </div>
+    <div class="outro-box">
+      <div class="outro-head">♩=88 / rit. — テンポを落として最終告白</div>
+      <div class="outro-body">
+        <div class="crow c4">
+          <div class="cc" style="--fn:var(--IIIm)">
+            <div class="cn">F♯m<sup>7♭5</sup></div>
+            <div class="ctags"><span class="ct ct-deg">IIIm7♭5</span><span class="ct ct-fn" style="background:var(--Chr)">Half-dim</span></div>
+            <div class="cnote">"thinking of you" — ♭5のハーフディミニッシュ。影と不安。</div>
+          </div>
+          <div class="cc" style="--fn:var(--sec)">
+            <div class="cn">B7<sup>♯5</sup></div>
+            <div class="ctags"><span class="ct ct-deg">VI7♯5</span><span class="ct ct-fn" style="background:var(--sec)">V/IIm</span></div>
+            <div class="cnote">増音ドミナント。"I know"</div>
+          </div>
+          <div class="cc" style="--fn:var(--IIm)">
+            <div class="cn">Em<sup>7</sup></div>
+            <div class="ctags"><span class="ct ct-deg">IIm7</span><span class="ct ct-fn" style="background:var(--IIm)">IIm</span></div>
+            <div class="cnote">"I've loved you"</div>
+          </div>
+          <div class="cc" style="--fn:var(--Chr)">
+            <div class="cn">Em<sup>7♭5</sup><br><span style="font-size:0.7em;font-family:'DM Mono',monospace;color:var(--dim)">/B♭</span></div>
+            <div class="ctags"><span class="ct ct-deg">IIm7♭5/♭6</span><span class="ct ct-fn" style="background:var(--Chr)">Chr</span></div>
+            <div class="cnote">B♭ベース。クロマティックな異質感。"from the"</div>
+          </div>
+        </div>
+        <div class="crow c2">
+          <div class="cc" style="--fn:var(--T)">
+            <div class="cn">D</div>
+            <div class="ctags"><span class="ct ct-deg">I（終止）</span><span class="ct ct-fn" style="background:var(--T)">T</span></div>
+            <div class="cnote">"start." — シンプルなDメジャーで終止。告白の完結。</div>
+          </div>
+          <div class="cc rest"><span class="rst">fermata ♩</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOW -->
+  <div class="flow-box">
+    <div class="flow-title">楽曲全体フロー — Key = D Major</div>
+
+    <div class="frow">
+      <span class="flabel">Intro</span>
+      <div class="fc hi">Em9</div><span class="farr">→</span>
+      <div class="fc hi">A13</div><span class="farr">→</span>
+      <div class="fc hi">Dmaj7</div>
+      <span class="fanno">IIm9–V13–Imaj7</span>
+    </div>
+
+    <div class="frow">
+      <span class="flabel">Verse</span>
+      <div class="fc">Em7</div><span class="farr">→</span>
+      <div class="fc">A7</div><span class="farr">→</span>
+      <div class="fc hi">Dmaj7</div><span class="farr">→</span>
+      <div class="fc">Em9</div><span class="farr">→</span>
+      <div class="fc">A13</div><span class="farr">→</span>
+      <div class="fc">F♯m7</div><span class="farr">→</span>
+      <div class="fc chr">B7♯5</div>
+      <span class="fanno">IIm–V–I + セカンダリーD</span>
+    </div>
+
+    <div class="frow">
+      <span class="flabel">Pre-Chorus</span>
+      <div class="fc">Em9</div><span class="farr">→</span>
+      <div class="fc">A13</div><span class="farr">→</span>
+      <div class="fc hi">Dmaj9</div><span class="farr">→</span>
+      <div class="fc">Em9</div><span class="farr">→</span>
+      <div class="fc">A13</div>
+    </div>
+
+    <div class="frow">
+      <span class="flabel">Chorus ★</span>
+      <div class="fc">A13</div><span class="farr">→</span>
+      <div class="fc ch">Dmaj7</div><span class="farr">→</span>
+      <div class="fc">Em9</div><span class="farr">→</span>
+      <div class="fc ch">Dmaj13</div><span class="farr">→</span>
+      <div class="fc">F♯m7</div><span class="farr">→</span>
+      <div class="fc chr">B7♭9♭13</div><span class="farr">→</span>
+      <div class="fc ch">D9/6</div>
+      <span class="fanno">"from the start"</span>
+    </div>
+
+    <div class="frow">
+      <span class="flabel">Outro ♩=88</span>
+      <div class="fc chr">F♯m7♭5</div><span class="farr">→</span>
+      <div class="fc chr">B7♯5</div><span class="farr">→</span>
+      <div class="fc out">Em7</div><span class="farr">→</span>
+      <div class="fc out">Em7♭5/B♭</div><span class="farr">→</span>
+      <div class="fc ch">D</div>
+      <span class="fanno">rit. → fermata</span>
+    </div>
+  </div>
+
+  <!-- THEORY -->
+  <div class="theory-grid">
+    <div class="tcard">
+      <h3>🎹 この曲のジャズ語法</h3>
+      <ul>
+        <li><strong>IIm7–V7–Imaj7</strong> — ジャズの基本ターンアラウンド</li>
+        <li><strong>A13</strong> — 13thドミナント。Laufeyのサウンド核心</li>
+        <li><strong>B7♯5 / B7♭9♭13</strong> — オルタードドミナント（V/IIm）</li>
+        <li><strong>Dmaj9 / Dmaj13</strong> — テンション積み重ね</li>
+        <li><strong>D9/6</strong> — 6th+9thの豊かな終止コード</li>
+        <li><strong>F♯m7♭5</strong> — ハーフディミニッシュ（半減七）</li>
+      </ul>
+    </div>
+    <div class="tcard">
+      <h3>📐 Outro の特殊コード解析</h3>
+      <ul>
+        <li><strong>F♯m7♭5</strong> — F♯半減七。♭5が不安感を演出</li>
+        <li><strong>Em7♭5/B♭</strong> — Em半減七にB♭ベース。クロマ接近</li>
+        <li>B♭→A の半音下降でD（I）へ解決</li>
+        <li>テンポが ♩=164 → ♩=88 に半減。感情の解放</li>
+        <li>"I know I've loved you from the start" = 告白の完結</li>
+      </ul>
+    </div>
+    <div class="tcard">
+      <h3>🎵 コード進行の感情マップ</h3>
+      <ul>
+        <li><strong>Verse Em–A–D</strong> — 片思いの日常。IIm–V–Iの安定ループ</li>
+        <li><strong>B7♯5</strong> — ドキドキ。増音の不安定さ</li>
+        <li><strong>Dmaj13</strong> — "And I sound like a loon" の自嘲的開放感</li>
+        <li><strong>B7♭9♭13</strong> — "Confess" の最大緊張</li>
+        <li><strong>D9/6</strong> — "from the start" の甘い解決</li>
+        <li><strong>Em7♭5/B♭→D</strong> — 最後の一歩の勇気</li>
+      </ul>
+    </div>
+    <div class="tcard">
+      <h3>🌸 Laufey のハーモニースタイル</h3>
+      <p>
+        クラシック音楽を学んだLaufeyならではの<strong>ジャズ語法 × ポップ構造</strong>。<br><br>
+        <strong>IIm–V–I</strong>（ジャズの基本）をベースに、<strong>オルタードテンション</strong>（♭9、♯5、♭13）を積み上げることで、ポップでありながらジャズの知性を持つ独自サウンドを構築。<br><br>
+        Outroの♩=88転換は、曲全体の「片思い→告白」の感情弧を音楽的に完結させる演出。
+      </p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
