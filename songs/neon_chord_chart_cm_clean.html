@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neon — John Mayer | Key = C Minor</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08080f;
+    --s1: #0e0e1a;
+    --card: #161628;
+    --card2: #1c1c34;
+    --border: rgba(160,140,255,0.1);
+    --text: #e8e6ff;
+    --dim: #6060a0;
+    --light: #303060;
+
+    --neon:  #b060ff;
+    --neon2: #6040cc;
+    --cyan:  #40d0ff;
+    --gold:  #ffc040;
+
+    --Im:   #9e3a2a;
+    --IVm:  #2a5a9e;
+    --Vm:   #2d8a5e;
+    --bVII: #9e6a2a;
+    --bVI:  #6a3a9e;
+    --bIII: #1a6a4a;
+    --Chr:  #7a4a9e;
+    --sus:  #2a8a9e;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    padding: 44px 20px 88px;
+  }
+
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background:
+      radial-gradient(ellipse 60% 35% at 20% 10%, rgba(176,96,255,0.08), transparent),
+      radial-gradient(ellipse 50% 30% at 85% 80%, rgba(64,208,255,0.05), transparent);
+    pointer-events:none; z-index:0;
+  }
+
+  .page { max-width: 960px; margin: 0 auto; position: relative; z-index:1; }
+
+  /* ── HEADER ── */
+  header {
+    text-align: center;
+    margin-bottom: 36px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    animation: glow-in 0.8s ease;
+  }
+
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.28em;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(3.5rem, 10vw, 7rem);
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    background: linear-gradient(135deg, #b060ff 0%, #6040cc 30%, #40d0ff 60%, #ff40a0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 30px rgba(176,96,255,0.4));
+    margin-bottom: 14px;
+  }
+
+  .header-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--dim);
+    letter-spacing: 0.1em;
+    line-height: 2;
+  }
+
+  .header-meta .key {
+    color: var(--neon);
+    font-size: 1rem;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  /* ── META PILLS ── */
+  .meta-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+    animation: fadeUp 0.5s ease 0.1s both;
+  }
+
+  .mp {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.64rem;
+    padding: 4px 13px;
+    border-radius: 20px;
+    letter-spacing: 0.07em;
+    border: 1px solid;
+  }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    justify-content: center;
+    padding: 10px 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 36px;
+    animation: fadeUp 0.5s ease 0.15s both;
+  }
+
+  .leg { display:flex; align-items:center; gap:6px; font-size:0.68rem; color:var(--dim); font-family:'DM Mono',monospace; }
+  .lsw { width:12px; height:5px; border-radius:3px; }
+
+  /* ── SECTION ── */
+  .sec-block {
+    margin-bottom: 28px;
+    animation: fadeUp 0.55s ease both;
+  }
+
+  .sec-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .sec-tag {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    padding: 5px 15px;
+    border-radius: 4px;
+    color: white;
+  }
+
+  .sec-desc {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--dim);
+  }
+
+  /* ── CHORD GRID ── */
+  .crow-wrap { display:flex; flex-direction:column; gap:8px; }
+  .crow { display:grid; gap:8px; }
+  .c5 { grid-template-columns: repeat(5,1fr); }
+  .c4 { grid-template-columns: repeat(4,1fr); }
+  .c3 { grid-template-columns: repeat(3,1fr); }
+  .c2 { grid-template-columns: repeat(2,1fr); }
+
+  .cc {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--fn, var(--border));
+    border-radius: 8px;
+    padding: 11px 12px;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .cc:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(176,96,255,0.15);
+  }
+
+  .cc.rest {
+    background: var(--s1);
+    border-top-color: var(--border);
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  .rst { font-family:'DM Mono',monospace; font-size:0.8rem; color:var(--light); letter-spacing:3px; }
+
+  .cn {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 5px;
+    letter-spacing: 0.02em;
+  }
+
+  .cn sup {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.4em;
+    vertical-align: super;
+    color: var(--fn, var(--dim));
+    letter-spacing: 0;
+  }
+
+  .ctags { display:flex; gap:3px; flex-wrap:wrap; margin-bottom:5px; }
+
+  .ct {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.52rem;
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+
+  .ct-deg { background: rgba(255,255,255,0.06); color: var(--dim); }
+  .ct-fn  { color: white; font-weight:500; }
+
+  .cnote {
+    font-size: 0.62rem;
+    color: var(--dim);
+    line-height: 1.5;
+    font-weight: 300;
+  }
+
+  /* ── CHORUS HIGHLIGHT BOX ── */
+  .chorus-box {
+    background: var(--card);
+    border: 1px solid rgba(158,58,42,0.35);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .chorus-box-head {
+    background: rgba(158,58,42,0.15);
+    padding: 9px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+    color: #e07060;
+    text-transform: uppercase;
+  }
+
+  .chorus-box-body { padding: 14px; display:flex; flex-direction:column; gap:8px; }
+
+  /* ── FLOW ── */
+  .flow-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: 2px solid var(--neon);
+    border-radius: 12px;
+    padding: 22px 24px;
+    margin: 32px 0;
+    animation: fadeUp 0.5s ease 0.5s both;
+  }
+
+  .flow-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    color: var(--neon);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .frow {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .frow:last-child { border-bottom:none; }
+
+  .flabel {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    color: var(--dim);
+    min-width: 90px;
+    letter-spacing: 0.05em;
+  }
+
+  .fc {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    white-space: nowrap;
+    font-weight: 400;
+  }
+
+  .fc.hi    { background: var(--neon2); color:white; border-color:var(--neon); box-shadow:0 0 8px rgba(176,96,255,0.3); }
+  .fc.im    { background: rgba(158,58,42,0.2); color:#e07060; border-color:rgba(158,58,42,0.4); }
+  .fc.chr   { background: rgba(255,192,64,0.08); color:var(--gold); border-color:rgba(255,192,64,0.25); }
+  .fc.free  { background: rgba(64,208,255,0.1); color:var(--cyan); border-color:rgba(64,208,255,0.3); }
+
+  .farr  { color:var(--light); font-size:0.7rem; }
+  .fanno { font-size:0.6rem; color:var(--gold); font-style:italic; margin-left:4px; }
+
+  /* ── THEORY ── */
+  .theory-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 24px;
+    animation: fadeUp 0.5s ease 0.6s both;
+  }
+
+  .tcard {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+
+  .tcard h3 {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.16em;
+    color: var(--neon);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    padding-bottom: 7px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tcard ul { list-style:none; }
+  .tcard li, .tcard p { font-size:0.72rem; color:var(--dim); line-height:1.85; }
+  .tcard li::before { content:'— '; color:var(--neon); font-family:'DM Mono',monospace; }
+  .tcard strong { color:var(--text); font-weight:500; }
+
+  @keyframes glow-in {
+    from { opacity:0; transform:translateY(-14px); filter:blur(6px); }
+    to   { opacity:1; transform:translateY(0); filter:blur(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(12px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  @media(max-width:620px) {
+    .c5,.c4 { grid-template-columns: repeat(2,1fr); }
+    .c3     { grid-template-columns: repeat(2,1fr); }
+    .theory-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <header>
+    <div class="eyebrow">John Mayer — Room for Squares (2001)</div>
+    <h1>NEON</h1>
+    <div class="header-meta">
+      <span class="key">Key = C Minor</span>
+      ♩ = 102　Swing 16ths　Drop C tuning (C-A-D-G-B-E)　Fingerpicking w/ thumb
+    </div>
+  </header>
+
+  <!-- META PILLS -->
+  <div class="meta-row">
+    <span class="mp" style="background:rgba(158,58,42,0.12);color:#e07060;border-color:rgba(158,58,42,0.3)">Im = Cm</span>
+    <span class="mp" style="background:rgba(42,90,158,0.12);color:#6090d8;border-color:rgba(42,90,158,0.3)">IVm = Fm</span>
+    <span class="mp" style="background:rgba(45,138,94,0.12);color:#50c880;border-color:rgba(45,138,94,0.3)">Vm = Gm</span>
+    <span class="mp" style="background:rgba(158,106,42,0.12);color:#d89050;border-color:rgba(158,106,42,0.3)">♭VII = B♭</span>
+    <span class="mp" style="background:rgba(106,58,158,0.12);color:#a080d8;border-color:rgba(106,58,158,0.3)">♭VI = A♭</span>
+    <span class="mp" style="background:rgba(26,106,74,0.12);color:#40c890;border-color:rgba(26,106,74,0.3)">♭III = E♭</span>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="leg"><div class="lsw" style="background:var(--sus)"></div>Isus4（Csus4）</div>
+    <div class="leg"><div class="lsw" style="background:var(--Im)"></div>Im（Cm）</div>
+    <div class="leg"><div class="lsw" style="background:var(--IVm)"></div>IVm（Fm）</div>
+    <div class="leg"><div class="lsw" style="background:var(--Vm)"></div>Vm（Gm）</div>
+    <div class="leg"><div class="lsw" style="background:var(--bVII)"></div>♭VII（B♭）</div>
+    <div class="leg"><div class="lsw" style="background:var(--bVI)"></div>♭VI（A♭）</div>
+    <div class="leg"><div class="lsw" style="background:var(--bIII)"></div>♭III（E♭）</div>
+    <div class="leg"><div class="lsw" style="background:var(--Chr)"></div>クロマ借用</div>
+  </div>
+
+  <!-- ══════ INTRO ══════ -->
+  <div class="sec-block" style="animation-delay:0.08s">
+    <div class="sec-head">
+      <span class="sec-tag" style="background:linear-gradient(135deg,#6040cc,#b060ff)">Intro</span>
+      <span class="sec-desc">Rhy. Fig. 1 ループ × 1</span>
+    </div>
+    <div class="crow c5">
+      <div class="cc" style="--fn:var(--sus)">
+        <div class="cn">Csus<sup>4</sup></div>
+        <div class="ctags"><span class="ct ct-deg">Isus4</span><span class="ct ct-fn" style="background:var(--sus)">T-sus</span></div>
+        <div class="cnote">主音C。解決しないサスペンションが全曲の軸。</div>
+      </div>
+      <div class="cc" style="--fn:var(--bIII)">
+        <div class="cn">E♭add<sup>2</sup></div>
+        <div class="ctags"><span class="ct ct-deg">♭IIIadd2</span><span class="ct ct-fn" style="background:var(--bIII)">♭III</span></div>
+        <div class="cnote">自然短音階の♭III。マイナーの色彩。</div>
+      </div>
+      <div class="cc" style="--fn:var(--IVm)">
+        <div class="cn">Fm7<sup>add4</sup></div>
+        <div class="ctags"><span class="ct ct-deg">IVm7add4</span><span class="ct ct-fn" style="background:var(--IVm)">IVm</span></div>
+        <div class="cnote">サビの「4m」がここでも登場。</div>
+      </div>
+      <div class="cc" style="--fn:var(--bVI)">
+        <div class="cn">A♭sus<sup>2</sup></div>
+        <div class="ctags"><span class="ct ct-deg">♭VIsus2</span><span class="ct ct-fn" style="background:var(--bVI)">♭VI</span></div>
+        <div class="cnote">C Aeolianの♭VI。広がりと暗さ。</div>
+      </div>
+      <div class="cc" style="--fn:var(--bVII)">
+        <div class="cn">B♭<sup>§</sup></div>
+        <div class="ctags"><span class="ct ct-deg">♭VII§</span><span class="ct ct-fn" style="background:var(--bVII)">♭VII</span></div>
+        <div class="cnote">♭VIIの通過コード。主和音ではない。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ VERSE ══════ -->
+  <div class="sec-block" style="animation-delay:0.13s">
+    <div class="sec-head">
+      <span class="sec-tag" style="background:linear-gradient(135deg,#1a4a6e,#2a6a9e)">Verse</span>
+      <span class="sec-desc">"When sky blue gets dark enough…" — Isus4–♭III–IVm–♭VI–♭VII × 4</span>
+    </div>
+    <div class="crow-wrap">
+      <div class="crow c5">
+        <div class="cc" style="--fn:var(--sus)">
+          <div class="cn">Csus<sup>4</sup></div>
+          <div class="ctags"><span class="ct ct-deg">Isus4</span><span class="ct ct-fn" style="background:var(--sus)">T-sus</span></div>
+        </div>
+        <div class="cc" style="--fn:var(--bIII)">
+          <div class="cn">E♭add<sup>2</sup></div>
+          <div class="ctags"><span class="ct ct-deg">♭IIIadd2</span><span class="ct ct-fn" style="background:var(--bIII)">♭III</span></div>
+        </div>
+        <div class="cc" style="--fn:var(--IVm)">
+          <div class="cn">Fm7<sup>add4</sup></div>
+          <div class="ctags"><span class="ct ct-deg">IVm7add4</span><span class="ct ct-fn" style="background:var(--IVm)">IVm</span></div>
+        </div>
+        <div class="cc" style="--fn:var(--bVI)">
+          <div class="cn">A♭sus<sup>2</sup></div>
+          <div class="ctags"><span class="ct ct-deg">♭VIsus2</span><span class="ct ct-fn" style="background:var(--bVI)">♭VI</span></div>
+        </div>
+        <div class="cc" style="--fn:var(--bVII)">
+          <div class="cn">B♭<sup>§</sup></div>
+          <div class="ctags"><span class="ct ct-deg">♭VII§</span><span class="ct ct-fn" style="background:var(--bVII)">♭VII</span></div>
+        </div>
+      </div>
+      <div style="text-align:center;font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);padding:3px 0;">
+        ↑ このループ × 4
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ PRE-CHORUS ══════ -->
+  <div class="sec-block" style="animation-delay:0.18s">
+    <div class="sec-head">
+      <span class="sec-tag" style="background:linear-gradient(135deg,#4a1a6e,#7a3a9e)">Pre-Chorus</span>
+      <span class="sec-desc">"She comes and goes…" — ♭VI–Vm。G♭§ のクロマティック。</span>
+    </div>
+    <div class="crow-wrap">
+      <div class="crow c3">
+        <div class="cc" style="--fn:var(--bVI)">
+          <div class="cn">A♭<sup>§</sup></div>
+          <div class="ctags"><span class="ct ct-deg">♭VI§</span><span class="ct ct-fn" style="background:var(--bVI)">♭VI</span></div>
+          <div class="cnote">"She comes and goes"</div>
+        </div>
+        <div class="cc" style="--fn:var(--Vm)">
+          <div class="cn">Gm7<sup>add4</sup></div>
+          <div class="ctags"><span class="ct ct-deg">Vm7add4</span><span class="ct ct-fn" style="background:var(--Vm)">Vm</span></div>
+          <div class="cnote">サビの「5m」。解決しないVm。</div>
+        </div>
+        <div class="cc" style="--fn:var(--Chr)">
+          <div class="cn">G♭<sup>§</sup></div>
+          <div class="ctags"><span class="ct ct-deg">♭V</span><span class="ct ct-fn" style="background:var(--Chr)">Chr</span></div>
+          <div class="cnote">C Aeolianにない♭V。"like no one can" の最大色彩変化。</div>
+        </div>
+      </div>
+      <div class="crow c4">
+        <div class="cc" style="--fn:var(--bVI)">
+          <div class="cn">A♭<sup>§</sup></div>
+          <div class="ctags"><span class="ct ct-deg">♭VI§</span><span class="ct ct-fn" style="background:var(--bVI)">♭VI</span></div>
+        </div>
+        <div class="cc" style="--fn:var(--Vm)">
+          <div class="cn">Gm7<sup>add4</sup></div>
+          <div class="ctags"><span class="ct ct-deg">Vm7add4</span><span class="ct ct-fn" style="background:var(--Vm)">Vm</span></div>
+        </div>
+        <div class="cc" style="--fn:var(--IVm)">
+          <div class="cn">Fm7<sup>add4</sup></div>
+          <div class="ctags"><span class="ct ct-deg">IVm7add4</span><span class="ct ct-fn" style="background:var(--IVm)">IVm</span></div>
+        </div>
+        <div class="cc" style="--fn:var(--bVII)">
+          <div class="cn">B♭</div>
+          <div class="ctags"><span class="ct ct-deg">♭VII</span><span class="ct ct-fn" style="background:var(--bVII)">♭VII</span></div>
+          <div class="cnote">"just like Neon" → サビへ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ CHORUS ══════ -->
+  <div class="sec-block" style="animation-delay:0.23s">
+    <div class="sec-head">
+      <span class="sec-tag" style="background:linear-gradient(135deg,#7a1a1a,#cc3a2a)">Chorus</span>
+      <span class="sec-desc">"Ne-on, ne-on…" — IVm → Vm → Im（4m–5m–1m）</span>
+    </div>
+    <div class="chorus-box">
+      <div class="chorus-box-head">★ サビの核心 — Fm → Gm → Cm = IVm → Vm → Im</div>
+      <div class="chorus-box-body">
+        <div class="crow c3">
+          <div class="cc" style="--fn:var(--IVm)">
+            <div class="cn">Fm7<sup>add4</sup></div>
+            <div class="ctags"><span class="ct ct-deg">IVm7add4</span><span class="ct ct-fn" style="background:var(--IVm)">IVm — 4m</span></div>
+            <div class="cnote">"Ne-on" 1音目</div>
+          </div>
+          <div class="cc" style="--fn:var(--Vm)">
+            <div class="cn">Gm7<sup>add4</sup></div>
+            <div class="ctags"><span class="ct ct-deg">Vm7add4</span><span class="ct ct-fn" style="background:var(--Vm)">Vm — 5m</span></div>
+            <div class="cnote">"ne-on" 2音目。Vmのまま = 解決しない浮遊。</div>
+          </div>
+          <div class="cc" style="--fn:var(--Im)">
+            <div class="cn">Cm<sup>7</sup></div>
+            <div class="ctags"><span class="ct ct-deg">Im7</span><span class="ct ct-fn" style="background:var(--Im)">Im — 1m ✓</span></div>
+            <div class="cnote">トニック着地。"how long" の安堵。</div>
+          </div>
+        </div>
+        <div class="crow c3">
+          <div class="cc" style="--fn:var(--IVm)"><div class="cn">Fm7<sup>add4</sup></div><div class="ctags"><span class="ct ct-deg">IVm7add4</span><span class="ct ct-fn" style="background:var(--IVm)">IVm</span></div></div>
+          <div class="cc" style="--fn:var(--Vm)"><div class="cn">Gm7<sup>add4</sup></div><div class="ctags"><span class="ct ct-deg">Vm7add4</span><span class="ct ct-fn" style="background:var(--Vm)">Vm</span></div></div>
+          <div class="cc" style="--fn:var(--bVII)">
+            <div class="cn">B♭<sup>sus2</sup></div>
+            <div class="ctags"><span class="ct ct-deg">♭VIIsus2</span><span class="ct ct-fn" style="background:var(--bVII)">♭VII</span></div>
+            <div class="cnote">"how long" — サスペンション余韻</div>
+          </div>
+        </div>
+        <div class="crow c2">
+          <div class="cc" style="--fn:var(--bVI)">
+            <div class="cn">A♭sus<sup>2</sup></div>
+            <div class="ctags"><span class="ct ct-deg">♭VIsus2</span><span class="ct ct-fn" style="background:var(--bVI)">♭VI</span></div>
+            <div class="cnote">"she can go before"</div>
+          </div>
+          <div class="cc" style="--fn:var(--bVI)">
+            <div class="cn">A♭</div>
+            <div class="ctags"><span class="ct ct-deg">♭VI</span><span class="ct ct-fn" style="background:var(--bVI)">♭VI</span></div>
+            <div class="cnote">"she burns away" → Bridge/Coda</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ BRIDGE ══════ -->
+  <div class="sec-block" style="animation-delay:0.28s">
+    <div class="sec-head">
+      <span class="sec-tag" style="background:linear-gradient(135deg,#1a3a5a,#1a5a7a)">Bridge</span>
+      <span class="sec-desc">IVm → Vm → ♭VIm → ♭VIIm — 全音+半音の上昇クロマ → G/B で解放</span>
+    </div>
+    <div class="crow-wrap">
+      <div class="crow c4">
+        <div class="cc" style="--fn:var(--IVm)">
+          <div class="cn">Fm7<sup>add4</sup></div>
+          <div class="ctags"><span class="ct ct-deg">IVm7add4</span><span class="ct ct-fn" style="background:var(--IVm)">IVm ①</span></div>
+          <div class="cnote">起点</div>
+        </div>
+        <div class="cc" style="--fn:var(--Vm)">
+          <div class="cn">Gm7<sup>add4</sup></div>
+          <div class="ctags"><span class="ct ct-deg">Vm7add4</span><span class="ct ct-fn" style="background:var(--Vm)">Vm ②</span></div>
+          <div class="cnote">+全音</div>
+        </div>
+        <div class="cc" style="--fn:var(--Chr)">
+          <div class="cn">A♭m7<sup>add4</sup></div>
+          <div class="ctags"><span class="ct ct-deg">♭VIm7add4</span><span class="ct ct-fn" style="background:var(--Chr)">♭VIm ③</span></div>
+          <div class="cnote">+半音。ダイアトニック外。暗転。</div>
+        </div>
+        <div class="cc" style="--fn:var(--Chr)">
+          <div class="cn">B♭m7<sup>add4</sup></div>
+          <div class="ctags"><span class="ct ct-deg">♭VIIm7add4</span><span class="ct ct-fn" style="background:var(--Chr)">♭VIIm ④</span></div>
+          <div class="cnote">+全音。最大緊張点。</div>
+        </div>
+      </div>
+      <div class="crow c4">
+        <div class="cc" style="--fn:var(--IVm)"><div class="cn">Fm7<sup>add4</sup></div><div class="ctags"><span class="ct ct-deg">IVm7add4</span><span class="ct ct-fn" style="background:var(--IVm)">IVm</span></div></div>
+        <div class="cc" style="--fn:var(--Vm)"><div class="cn">Gm7<sup>add4</sup></div><div class="ctags"><span class="ct ct-deg">Vm7add4</span><span class="ct ct-fn" style="background:var(--Vm)">Vm</span></div></div>
+        <div class="cc" style="--fn:var(--Chr)"><div class="cn">A♭m7<sup>add4</sup></div><div class="ctags"><span class="ct ct-deg">♭VIm7add4</span><span class="ct ct-fn" style="background:var(--Chr)">♭VIm</span></div></div>
+        <div class="cc" style="--fn:var(--Chr)">
+          <div class="cn">B♭m7<sup>add4</sup></div>
+          <div class="ctags"><span class="ct ct-deg">♭VIIm7add4</span><span class="ct ct-fn" style="background:var(--Chr)">♭VIIm</span></div>
+          <div class="cnote">別ボイシング。さらに締め上げる。</div>
+        </div>
+      </div>
+      <div class="crow c2">
+        <div class="cc" style="--fn:var(--Chr)">
+          <div class="cn">B♭m7<sup>add4</sup></div>
+          <div class="ctags"><span class="ct ct-deg">♭VIIm7add4</span></div>
+        </div>
+        <div class="cc" style="--fn:var(--Chr)">
+          <div class="cn">G<sup>/B</sup></div>
+          <div class="ctags"><span class="ct ct-deg">♭VII/VII（G Major）</span><span class="ct ct-fn" style="background:var(--Chr)">解放！</span></div>
+          <div class="cnote">CマイナーにないGメジャー。Bナチュラルが一瞬の光。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ INTERLUDE ══════ -->
+  <div class="sec-block" style="animation-delay:0.33s">
+    <div class="sec-head">
+      <span class="sec-tag" style="background:linear-gradient(135deg,#2a4a1a,#3a6a2a)">Interlude</span>
+      <span class="sec-desc">C7♯9（Jimi Chord）→ Verse ループ回帰</span>
+    </div>
+    <div class="crow-wrap">
+      <div class="crow c2">
+        <div class="cc" style="--fn:var(--Chr)">
+          <div class="cn">C7<sup>♯9</sup></div>
+          <div class="ctags"><span class="ct ct-deg">I7♯9</span><span class="ct ct-fn" style="background:var(--Chr)">Jimi Chord</span></div>
+          <div class="cnote">主音Cをブルースドミナント化。♯9（E♭）= 短長同居。最大の異質感。</div>
+        </div>
+        <div class="cc rest"><span class="rst">→ Verse loop ×2</span></div>
+      </div>
+      <div class="crow c5">
+        <div class="cc" style="--fn:var(--sus)"><div class="cn">Csus<sup>4</sup></div><div class="ctags"><span class="ct ct-deg">Isus4</span><span class="ct ct-fn" style="background:var(--sus)">T-sus</span></div></div>
+        <div class="cc" style="--fn:var(--bIII)"><div class="cn">E♭add<sup>2</sup></div><div class="ctags"><span class="ct ct-deg">♭IIIadd2</span><span class="ct ct-fn" style="background:var(--bIII)">♭III</span></div></div>
+        <div class="cc" style="--fn:var(--IVm)"><div class="cn">Fm7<sup>add4</sup></div><div class="ctags"><span class="ct ct-deg">IVm7add4</span><span class="ct ct-fn" style="background:var(--IVm)">IVm</span></div></div>
+        <div class="cc" style="--fn:var(--bVI)"><div class="cn">A♭sus<sup>2</sup></div><div class="ctags"><span class="ct ct-deg">♭VIsus2</span><span class="ct ct-fn" style="background:var(--bVI)">♭VI</span></div></div>
+        <div class="cc" style="--fn:var(--bVII)"><div class="cn">B♭<sup>§</sup></div><div class="ctags"><span class="ct ct-deg">♭VII§</span><span class="ct ct-fn" style="background:var(--bVII)">♭VII</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ OUTRO ══════ -->
+  <div class="sec-block" style="animation-delay:0.38s">
+    <div class="sec-head">
+      <span class="sec-tag" style="background:linear-gradient(135deg,#1a1a4a,#3a3a7a)">Outro</span>
+      <span class="sec-desc">Verseループ → Begin Fade → Fade out</span>
+    </div>
+    <div class="crow c5">
+      <div class="cc" style="--fn:var(--sus)"><div class="cn">Csus<sup>4</sup></div><div class="ctags"><span class="ct ct-deg">Isus4</span><span class="ct ct-fn" style="background:var(--sus)">T-sus</span></div></div>
+      <div class="cc" style="--fn:var(--bIII)"><div class="cn">E♭add<sup>2</sup></div><div class="ctags"><span class="ct ct-deg">♭IIIadd2</span><span class="ct ct-fn" style="background:var(--bIII)">♭III</span></div></div>
+      <div class="cc" style="--fn:var(--IVm)"><div class="cn">Fm7<sup>add4</sup></div><div class="ctags"><span class="ct ct-deg">IVm7add4</span><span class="ct ct-fn" style="background:var(--IVm)">IVm</span></div></div>
+      <div class="cc" style="--fn:var(--bVI)"><div class="cn">A♭sus<sup>2</sup></div><div class="ctags"><span class="ct ct-deg">♭VIsus2</span><span class="ct ct-fn" style="background:var(--bVI)">♭VI</span></div></div>
+      <div class="cc" style="--fn:var(--bVII)">
+        <div class="cn">B♭<sup>§</sup></div>
+        <div class="ctags"><span class="ct ct-deg">♭VII§</span><span class="ct ct-fn" style="background:var(--bVII)">♭VII</span></div>
+        <div class="cnote">☆ Fade out</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOW -->
+  <div class="flow-box">
+    <div class="flow-title">楽曲全体フロー — Key = C Minor</div>
+
+    <div class="frow">
+      <span class="flabel">Intro/Verse</span>
+      <div class="fc hi">Csus4</div><span class="farr">→</span>
+      <div class="fc">E♭add2</div><span class="farr">→</span>
+      <div class="fc">Fm7add4</div><span class="farr">→</span>
+      <div class="fc">A♭sus2</div><span class="farr">→</span>
+      <div class="fc">B♭§</div>
+      <span class="fanno">Isus4–♭III–IVm–♭VI–♭VII × 4</span>
+    </div>
+
+    <div class="frow">
+      <span class="flabel">Pre-Chorus</span>
+      <div class="fc">A♭§</div><span class="farr">→</span>
+      <div class="fc">Gm7add4</div><span class="farr">→</span>
+      <div class="fc chr">G♭§</div><span class="farr">→</span>
+      <div class="fc">A♭§</div><span class="farr">→</span>
+      <div class="fc">Fm7add4</div><span class="farr">→</span>
+      <div class="fc">B♭</div>
+      <span class="fanno">♭VI–Vm–♭V(Chr)</span>
+    </div>
+
+    <div class="frow">
+      <span class="flabel">Chorus ★</span>
+      <div class="fc im">Fm7add4</div><span class="farr">→</span>
+      <div class="fc im">Gm7add4</div><span class="farr">→</span>
+      <div class="fc im">Cm7</div>
+      <span class="fanno">IVm → Vm → Im（4m–5m–1m）</span>
+    </div>
+
+    <div class="frow">
+      <span class="flabel">Bridge ↑</span>
+      <div class="fc">Fm7add4</div><span class="farr">→</span>
+      <div class="fc">Gm7add4</div><span class="farr">→</span>
+      <div class="fc chr">A♭m7add4</div><span class="farr">→</span>
+      <div class="fc chr">B♭m7add4</div><span class="farr">→</span>
+      <div class="fc free">G/B</div>
+      <span class="fanno">IVm→Vm→♭VIm→♭VIIm → 解放</span>
+    </div>
+
+    <div class="frow">
+      <span class="flabel">Interlude</span>
+      <div class="fc chr">C7♯9</div><span class="farr">→</span>
+      <div class="fc hi">Verse loop</div>
+      <span class="fanno">I7♯9（Jimi Chord）→ 回帰</span>
+    </div>
+
+    <div class="frow">
+      <span class="flabel">Outro</span>
+      <div class="fc hi">Csus4</div><span class="farr">→</span>
+      <div class="fc">Fm7add4</div><span class="farr">→</span>
+      <div class="fc">A♭sus2</div><span class="farr">→</span>
+      <div class="fc">B♭§</div>
+      <span class="fanno">← Fade out</span>
+    </div>
+  </div>
+
+  <!-- THEORY -->
+  <div class="theory-grid">
+    <div class="tcard">
+      <h3>🎵 C Minor スケール対応</h3>
+      <ul>
+        <li><strong>Csus4</strong> — Isus4。解決しない主音。</li>
+        <li><strong>E♭add2</strong> — ♭III。C Aeolianの自然な♭III。</li>
+        <li><strong>Fm7add4</strong> — IVm。C Aeolian のIVm。</li>
+        <li><strong>Gm7add4</strong> — Vm。マイナーのまま = 浮遊。</li>
+        <li><strong>A♭§</strong> — ♭VI。C Aeolianの代表コード。</li>
+        <li><strong>B♭§</strong> — ♭VII。通過コード。</li>
+        <li><strong>G♭§</strong> — ♭V。借用クロマ。最大の色変化。</li>
+      </ul>
+    </div>
+    <div class="tcard">
+      <h3>💡 Vmがマイナーのまま の意味</h3>
+      <p>
+        通常マイナーキーではV = G7（メジャー）→ Cm に解決（ハーモニックマイナー）。<br><br>
+        しかしこの曲では <strong>Gm7のまま</strong>。<br>
+        G7にしないことで「解決しない緊張」が続き、
+        <strong>ネオンが消えそうで消えない</strong>浮遊感が生まれる。<br><br>
+        Aeolian（自然短音階）のVmを使い続けることが、この曲の核心。
+      </p>
+    </div>
+    <div class="tcard">
+      <h3>🔧 Drop C + 指弾きの仕組み</h3>
+      <ul>
+        <li>6弦開放 = C → 常にCが鳴りCが主音として確立</li>
+        <li>親指(T)が6弦ベースを担当、指がコードを演奏</li>
+        <li>コードは「implied」— ギター+ベース合算で成立</li>
+        <li>Swing 16ths が独特のグルーヴを生む</li>
+      </ul>
+    </div>
+    <div class="tcard">
+      <h3>🌃 ハーモニーと歌詞の対応</h3>
+      <ul>
+        <li><strong>Csus4ループ</strong> — "空が暗くなる"。解決しない夜</li>
+        <li><strong>G♭§（♭V）</strong> — "like no one can"。色が変わる瞬間</li>
+        <li><strong>IVm–Vm–Im</strong> — "Ne-on"。4m–5m–1mの着地</li>
+        <li><strong>Bridge上昇→G/B</strong> — 暗闇から光への瞬間</li>
+        <li><strong>C7♯9</strong> — 夜の混乱と深み</li>
+        <li><strong>Fade out</strong> — ネオンが静かに消える</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
